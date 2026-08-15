@@ -1,0 +1,63 @@
+name: Vehicles.dev API
+description: >-
+  A multi-product REST/JSON API providing vehicle data (VIN decoding, market valuation, listings, depreciation, recalls,
+  specifications, ownership costs) and employment/labor-market data, with a control plane for account, API-key, and
+  billing management. Secured via product API keys and WorkOS tokens; publicly described by an OpenAPI 3.1 contract.
+url: https://vehicles-dev-api.apievangelist.com/apis.yml
+created: '2026-08-15'
+modified: '2026-08-15'
+specificationVersion: '0.21'
+tags:
+  - Automotive
+  - Vehicle Data
+  - VIN Decoding
+  - Vehicle Valuation
+  - Market Value
+  - Vehicle Listings
+  - Recalls
+  - NHTSA
+  - vPIC
+  - Vehicle Specifications
+  - Depreciation
+  - Ownership Costs
+  - Jobs
+  - Labor Market Data
+  - REST
+  - OpenAPI
+apis:
+  - name: Vehicles.dev API
+    description: >-
+      REST/JSON API for vehicle and employment data plus account, API-key, and billing control planes, described by a
+      publicly retrievable OpenAPI 3.1 contract.
+    humanURL: https://api.vehicles.dev
+    baseURL: https://api.vehicles.dev
+    tags:
+      - Automotive
+      - Vehicle Data
+      - VIN Decoding
+      - Vehicle Valuation
+      - Market Value
+      - Vehicle Listings
+      - Recalls
+      - NHTSA
+      - vPIC
+      - Vehicle Specifications
+      - Depreciation
+      - Ownership Costs
+      - Jobs
+      - Labor Market Data
+      - REST
+      - OpenAPI
+    properties:
+      - type: OpenAPI
+        url: https://api.vehicles.dev/openapi.json
+      - type: Documentation
+        url: https://api.vehicles.dev/openapi.json
+maintainers:
+  - FN: Vehicles.dev API
+    url: https://api.vehicles.dev
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 95
+  at: '2026-08-15T22:11:37.090Z'
