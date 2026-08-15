@@ -1,8 +1,9 @@
-name: Vehicles.dev API
+name: Vehicles.dev
 description: >-
-  A multi-product REST/JSON API providing vehicle data (VIN decoding, market valuation, listings, depreciation, recalls,
-  specifications, ownership costs) and employment/labor-market data, with a control plane for account, API-key, and
-  billing management. Secured via product API keys and WorkOS tokens; publicly described by an OpenAPI 3.1 contract.
+  Automotive vehicle data platform offering a live REST API for VIN decoding, specifications, recalls, market valuation,
+  depreciation, ownership costs, listings, price history, and photos, backed by federal sources (NHTSA vPIC, NHTSA
+  recalls, EPA) and a continuously crawled US dealer-listings store. Ships an OpenAPI 3.1 contract and a local MCP
+  server exposing all ten endpoints as read-only tools.
 url: https://vehicles-dev-api.apievangelist.com/apis.yml
 created: '2026-08-15'
 modified: '2026-08-15'
@@ -24,6 +25,15 @@ tags:
   - Labor Market Data
   - REST
   - OpenAPI
+  - Vehicle Safety
+  - Car Listings
+  - Marketplace
+  - Pricing
+  - Cost of Ownership
+  - Vehicle Images
+  - MCP
+  - Agent Tools
+  - Machine Learning
 apis:
   - name: Vehicles.dev API
     description: >-
@@ -53,11 +63,42 @@ apis:
         url: https://api.vehicles.dev/openapi.json
       - type: Documentation
         url: https://api.vehicles.dev/openapi.json
+  - name: Vehicles.dev REST API
+    description: >-
+      Live, billable REST API with ten GET endpoints under /v1/vehicles/ for VIN decode, specifications, recalls, market
+      value, depreciation, ownership costs, composite report, listings search, listing price history, and photos. Bearer
+      API key auth (vdev_ prefix), server-to-server only, RFC 9457 problem documents.
+    humanURL: https://vehicles.dev/docs
+    baseURL: https://api.vehicles.dev
+    tags:
+      - Automotive
+      - Vehicle Data
+      - VIN Decoding
+      - Vehicle Specifications
+      - Vehicle Safety
+      - Recalls
+      - Car Listings
+      - Marketplace
+      - Vehicle Valuation
+      - Pricing
+      - Depreciation
+      - Cost of Ownership
+      - Vehicle Images
+      - MCP
+      - Agent Tools
+      - Machine Learning
+    properties:
+      - type: OpenAPI
+        url: https://api.vehicles.dev/openapi.json
+      - type: Documentation
+        url: https://vehicles.dev/docs
 maintainers:
   - FN: Vehicles.dev API
     url: https://api.vehicles.dev
+  - FN: Vehicles.dev
+    url: https://vehicles.dev/
 generated:
   by: apis.io/add
   model: claude-opus-4-8
   confidence: 95
-  at: '2026-08-15T22:11:37.090Z'
+  at: '2026-08-15T22:11:41.807Z'
