@@ -1,0 +1,179 @@
+generated: '2026-08-16'
+method: derived
+source: openapi/_original/vehicles-dev-api-openapi.json
+enriched_from: https://vehicles.dev/docs
+note: >-
+  The OpenAPI declares a single reusable component schema (components.schemas["def-0"], the shared
+  problem document) and inlines everything else, with nested objects typed as
+  `{type: object, additionalProperties: true}`. There is therefore NO $ref graph to walk: the
+  relationships below are derived from response envelopes, path/query identifiers and the documented
+  field semantics, not from schema references. That inlining is itself the finding — a generated
+  client gets untyped bags for `vehicle`, `specifications`, `results`, `inputs`, `observations`
+  and `recalls`.
+identifier_note: >-
+  There is no opaque, prefixed object-id scheme. The VIN is the natural key for eight of the ten data
+  endpoints; the two model endpoints (Market Value, Depreciation) key on the
+  year + make + model tuple instead, which is why they are model-level rather than VIN-level.
+entities:
+  - name: Vehicle
+    key: vin
+    key_format: 17-character VIN, upper-cased server-side
+    description: Canonical normalized identity for one vehicle.
+    fields: [year, make, model, trim, body_style, drivetrain, fuel, transmission, cylinders, doors, engine]
+    field_case: snake_case (pass-through)
+    provenance_fields: [origin, source]
+    origin_values: [store, vpic]
+    operations: [getVehicleVinDecode]
+  - name: Specifications
+    key: vin
+    description: Raw NHTSA vPIC factory spec sheet — seats, horsepower, GVWR, plant country.
+    upstream: NHTSA vPIC (live, uncached)
+    operations: [getVehicleSpecifications]
+  - name: RecallCampaign
+    key: year + make + model
+    description: NHTSA safety campaigns matched at year/make/model level, not per VIN.
+    upstream: NHTSA Recalls API (live, uncached)
+    caveat: A campaign listing does not by itself prove a specific VIN is affected.
+    date_caveat: report_date is passed through verbatim in NHTSA's inconsistent formats.
+    operations: [getVehicleRecalls]
+  - name: MarketValueEstimate
+    key: year + make + model (+ optional trim, miles, state, condition, colour, drivetrain, fuel, transmission, body_style, base_msrp)
+    description: Gradient-boosted asking-price estimate.
+    fields: [estimateUsd, currency, medianApePct, inputs, source]
+    caveat: An asking price derived from live dealer listings, not a realized transaction price.
+    model_quality: 3.7% median absolute percentage error on holdout data
+    operations: [getVehicleMarketValue]
+  - name: DepreciationCurve
+    key: make + model
+    description: Model-level retention curve and decay rate, with byModelYear elements.
+    caveat: Per make and model, not per trim or VIN.
+    refresh: periodically rebuilt table
+    operations: [getVehicleDepreciation]
+  - name: OwnershipCosts
+    key: year + make + model
+    description: EPA annual and five-year fuel cost, combined MPG, CO2. Fuel only.
+    fields: [annualFuelCostUsd]
+    upstream: EPA fueleconomy.gov (live, uncached)
+    operations: [getVehicleOwnershipCosts]
+  - name: Listing
+    key: internal listing row (no public id field documented)
+    description: One normalized US dealer listing from the continuous crawl.
+    fields: [price, is_active, days_on_market, condition, seller_type, source, state, mileage, valid_vin, quality]
+    envelope_fields: [count, limit, offset, total, results, source]
+    volume: ~1,721,693 normalized listings across ~1,719,030 distinct vehicles
+    caveat: >-
+      is_active means the row was live at the last crawl pass that covered it, not when that pass ran;
+      days_on_market counts from first observation, not the dealer's listing date. No crawl timestamp
+      is exposed.
+    operations: [getVehicleListings]
+  - name: PriceObservation
+    key: vin
+    description: Appended price and mileage observation from each crawl pass, powering listing history.
+    fields: [observed_at, firstSeen, lastSeen, price, mileage]
+    volume: ~4,686,766 observations
+    plan_gate: Scale only (403 plan_upgrade_required on Starter and Pro)
+    operations: [getVehicleHistory]
+  - name: Photo
+    key: vin
+    description: One hero image plus a link to the source listing. Not a gallery.
+    licensing: URLs point at CDNs owned by the source marketplace; imagery is not sublicensed.
+    operations: [getVehiclePhotos]
+  - name: CompositeVehicleReport
+    key: vin
+    status: legacy
+    description: Decoded identity + asking-price estimate + depreciation curve in one call.
+    fields: [coverage]
+    coverage_field_note: An array naming which sections resolved.
+    operations: [getVehicleReport]
+  - name: VehicleHistoryReport
+    key: id (UUID)
+    description: >-
+      Asynchronous, account-owned, provider-backed history report. Preserves the canonical JSON the
+      report provider returns.
+    fields: [id, vin, status, hasResult, retryAfterSeconds, replayed, createdAt, updatedAt]
+    states: [submitting, queued, processing, action_required, completed]
+    idempotency_key: Idempotency-Key header (UUID, required on create)
+    isolation: A report ordered by one account is not visible to another.
+    coverage_caveat: >-
+      When a title, accident, odometer or ownership section is absent, present it as unavailable —
+      never as a clean record.
+    operations:
+      - createVehicleHistoryReport
+      - retryVehicleHistoryReportSubmission
+      - getVehicleHistoryReportStatus
+      - getVehicleHistoryReportResult
+      - createControlVehicleHistoryReport
+      - listControlVehicleHistoryReports
+      - getControlVehicleHistoryReportStatus
+      - getControlVehicleHistoryReportResult
+  - name: Account
+    key: accountProductId
+    plane: control
+    description: Billing and membership root. Owns API keys, members, invitations, orders, invoices and reports.
+    operations: [getControlAccount, updateControlAccount, deleteControlAccount, provisionControlIdentity]
+  - name: ApiKey
+    key: id
+    plane: control
+    prefix: vdev_
+    description: Product-scoped machine credential. Secret shown once; only a hash and last four are stored.
+    operations: [listControlApiKeys, createControlApiKey, updateControlApiKey, revokeControlApiKey]
+  - name: Member
+    key: id
+    plane: control
+    operations: [listControlMembers, updateControlMember, removeControlMember]
+  - name: Invitation
+    key: id
+    plane: control
+    operations: [listControlInvitations, createControlInvitation, acceptControlInvitation, revokeControlInvitation]
+  - name: Subscription
+    key: accountProductId
+    plane: control
+    plans: [Starter, Pro, Scale]
+    operations:
+      - createControlBillingSubscriptionCheckout
+      - changeControlBillingSubscription
+      - cancelControlBillingSubscription
+      - changeOperatorAdminSubscriptionPlan
+      - setOperatorAdminSubscriptionCancellation
+  - name: Order
+    key: orderId
+    plane: control
+    operations: [getControlBillingOrders, createControlBillingCheckout, refundOperatorAdminOrder]
+  - name: Invoice
+    plane: control
+    operations: [getControlBillingInvoices]
+  - name: CreditBalance
+    plane: control
+    unit: USD micros (1,000,000 micros = $1)
+    machine_readable_to_api_key: false
+    operations: [getControlBillingSummary, getControlBillingUsage, grantOperatorBillingCredit]
+  - name: JobPosting
+    plane: data
+    description: Employment / labour-market data sold on the same vdev_ key.
+    operations: [getEmploymentJobs, getEmploymentMarketAnalytics]
+relationships:
+  - {from: Vehicle, to: Specifications, type: has_one, via: vin}
+  - {from: Vehicle, to: RecallCampaign, type: has_many, via: 'year+make+model derived from vin'}
+  - {from: Vehicle, to: Photo, type: has_one, via: vin}
+  - {from: Vehicle, to: Listing, type: has_many, via: vin}
+  - {from: Vehicle, to: CompositeVehicleReport, type: has_one, via: vin}
+  - {from: Vehicle, to: VehicleHistoryReport, type: has_many, via: vin}
+  - {from: Listing, to: PriceObservation, type: has_many, via: vin}
+  - {from: Listing, to: MarketValueEstimate, type: belongs_to, via: 'year+make+model (model trained on the listings corpus)'}
+  - {from: MarketValueEstimate, to: Vehicle, type: belongs_to, via: 'year+make+model'}
+  - {from: DepreciationCurve, to: Vehicle, type: belongs_to, via: 'make+model'}
+  - {from: OwnershipCosts, to: Vehicle, type: belongs_to, via: 'year+make+model'}
+  - {from: CompositeVehicleReport, to: MarketValueEstimate, type: has_one, via: composition}
+  - {from: CompositeVehicleReport, to: DepreciationCurve, type: has_one, via: composition}
+  - {from: CompositeVehicleReport, to: Vehicle, type: has_one, via: composition}
+  - {from: Account, to: ApiKey, type: has_many, via: accountProductId}
+  - {from: Account, to: Member, type: has_many, via: accountProductId}
+  - {from: Account, to: Invitation, type: has_many, via: accountProductId}
+  - {from: Account, to: Subscription, type: has_one, via: accountProductId}
+  - {from: Account, to: Order, type: has_many, via: accountProductId}
+  - {from: Account, to: Invoice, type: has_many, via: accountProductId}
+  - {from: Account, to: CreditBalance, type: has_one, via: accountProductId}
+  - {from: Account, to: VehicleHistoryReport, type: has_many, via: 'ownership scoping — a report is visible only to the ordering account'}
+  - {from: ApiKey, to: Account, type: belongs_to, via: product scoping}
+render: null
+render_note: No subway/ visual exists in this repo.

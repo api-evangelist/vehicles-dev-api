@@ -1,0 +1,38 @@
+generated: '2026-08-16'
+method: probed
+source: live GET probes of /.well-known/* on every apis.yml host
+note: >-
+  Every /.well-known/ path 404s on both hosts. api.vehicles.dev answers with a genuine RFC 9457
+  problem document (code route_not_found), which is a real, well-behaved 404 rather than a catch-all.
+  vehicles.dev is a Next.js app that returns its HTML 404 page with an HTTP 404 status. No document
+  was served on any path, so NO WellKnown and NO SecurityTxt pointer is emitted — this file records a
+  measured absence, not a presence.
+result: none
+documents_found: 0
+hosts:
+  - host: https://api.vehicles.dev
+    documents:
+      - {path: /.well-known/security.txt, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/openid-configuration, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/oauth-authorization-server, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/oauth-protected-resource, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/api-catalog, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/ai-plugin.json, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/agent-card.json, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/agent.json, status: 404, content_type: application/problem+json}
+      - {path: /.well-known/mcp.json, status: 404, content_type: application/problem+json}
+  - host: https://vehicles.dev
+    documents:
+      - {path: /.well-known/security.txt, status: 404, content_type: text/html}
+      - {path: /.well-known/openid-configuration, status: 404, content_type: text/html}
+      - {path: /.well-known/oauth-authorization-server, status: 404, content_type: text/html}
+      - {path: /.well-known/oauth-protected-resource, status: 404, content_type: text/html}
+      - {path: /.well-known/api-catalog, status: 404, content_type: text/html}
+      - {path: /.well-known/ai-plugin.json, status: 404, content_type: text/html}
+      - {path: /.well-known/agent-card.json, status: 404, content_type: text/html}
+      - {path: /.well-known/agent.json, status: 404, content_type: text/html}
+      - {path: /.well-known/mcp.json, status: 404, content_type: text/html}
+also_probed:
+  - {url: 'https://vehicles.dev/llms.txt', status: 404}
+  - {url: 'https://api.vehicles.dev/llms.txt', status: 404}
+  - {url: 'https://mcp.vehicles.dev/mcp', status: null, note: 'DNS NXDOMAIN — host does not resolve'}

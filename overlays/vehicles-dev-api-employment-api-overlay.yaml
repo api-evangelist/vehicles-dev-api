@@ -1,0 +1,41 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for Vehicles.dev — employment-api
+  version: 1.0.0
+extends: openapi/vehicles-dev-api-employment-api-openapi.yml
+x-provenance:
+  generated: '2026-08-16'
+  method: generated
+  source: >-
+    Derived from the provider's own OpenAPI 3.1 document at https://api.vehicles.dev/openapi.json plus
+    the published reference at https://vehicles.dev/docs. This overlay records API Evangelist
+    enhancements only; the harvested contract under openapi/ is never mutated.
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-slug: vehicles-dev-api
+      x-apievangelist-provider: Vehicles.dev
+      x-apievangelist-surface: employment-api
+      x-apievangelist-operations: 2
+      x-apievangelist-docs: https://vehicles.dev/docs
+      x-apievangelist-spec-source: https://api.vehicles.dev/openapi.json
+      x-apievangelist-error-format: rfc9457
+      x-apievangelist-error-catalog: errors/vehicles-dev-api-problem-types.yml
+      x-apievangelist-conventions: conventions/vehicles-dev-api-conventions.yml
+      x-apievangelist-authentication: authentication/vehicles-dev-api-authentication.yml
+      x-apievangelist-lifecycle: lifecycle/vehicles-dev-api-lifecycle.yml
+      x-apievangelist-rate-limits: rate-limits/vehicles-dev-api-rate-limits.yml
+      x-apievangelist-plans: plans/vehicles-dev-api-plans-pricing.yml
+  - target: $.servers
+    update:
+      - url: https://api.vehicles.dev
+        description: >-
+          Sole production host. Verified reachable 2026-08-16 — GET /health/live returned HTTP 200.
+          There is no sandbox or test host; VEHICLES_API_BASE_URL in the MCP server exists only to
+          point at a staging deployment the provider does not publish.
+  - target: $.info
+    update:
+      x-apievangelist-tracing-header: x-request-id
+      x-apievangelist-browser-callable: false
+      x-apievangelist-versioning: uri-path (/v1); no version header, no date pinning
+      x-apievangelist-billing: successOnly — settled on 2xx, released on any 4xx/5xx

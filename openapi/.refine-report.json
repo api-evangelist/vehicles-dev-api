@@ -1,0 +1,38 @@
+{
+  "provider": "vehicles-dev-api",
+  "sources": [
+    "vehicles-dev-api-openapi.json"
+  ],
+  "outputs": [
+    "vehicles-dev-api-admin-api-openapi.yml",
+    "vehicles-dev-api-billing-api-openapi.yml",
+    "vehicles-dev-api-control-api-openapi.yml",
+    "vehicles-dev-api-data-api-openapi.yml",
+    "vehicles-dev-api-employment-api-openapi.yml",
+    "vehicles-dev-api-operator-api-openapi.yml",
+    "vehicles-dev-api-reports-api-openapi.yml",
+    "vehicles-dev-api-vehicles-api-openapi.yml",
+    "vehicles-dev-api-webhooks-api-openapi.yml",
+    "vehicles-dev-api-operations-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/vehicles-dev-api-openapi.json"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "vehicles-dev-api-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "vehicles-dev-api-openapi.json: declared missing tag: Admin",
+    "vehicles-dev-api-openapi.json: declared missing tag: Billing",
+    "vehicles-dev-api-openapi.json: declared missing tag: Control",
+    "vehicles-dev-api-openapi.json: declared missing tag: Data",
+    "vehicles-dev-api-openapi.json: declared missing tag: Employment",
+    "vehicles-dev-api-openapi.json: declared missing tag: Operator",
+    "vehicles-dev-api-openapi.json: declared missing tag: Reports",
+    "vehicles-dev-api-openapi.json: declared missing tag: Vehicles",
+    "vehicles-dev-api-openapi.json: declared missing tag: Webhooks",
+    "vehicles-dev-api-openapi.json: declared missing tag: operations",
+    "apis.yml register: written (+10 apis, 10 total)"
+  ],
+  "skipped": []
+}

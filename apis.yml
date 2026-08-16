@@ -6,7 +6,7 @@ description: >-
   server exposing all ten endpoints as read-only tools.
 url: https://vehicles-dev-api.apievangelist.com/apis.yml
 created: '2026-08-15'
-modified: '2026-08-15'
+modified: '2026-08-16'
 specificationVersion: '0.21'
 tags:
   - Automotive
@@ -35,66 +35,170 @@ tags:
   - Agent Tools
   - Machine Learning
 apis:
-  - name: Vehicles.dev API
-    description: >-
-      REST/JSON API for vehicle and employment data plus account, API-key, and billing control planes, described by a
-      publicly retrievable OpenAPI 3.1 contract.
-    humanURL: https://api.vehicles.dev
-    baseURL: https://api.vehicles.dev
-    tags:
-      - Automotive
-      - Vehicle Data
-      - VIN Decoding
-      - Vehicle Valuation
-      - Market Value
-      - Vehicle Listings
-      - Recalls
-      - NHTSA
-      - vPIC
-      - Vehicle Specifications
-      - Depreciation
-      - Ownership Costs
-      - Jobs
-      - Labor Market Data
-      - REST
-      - OpenAPI
-    properties:
-      - type: OpenAPI
-        url: https://api.vehicles.dev/openapi.json
-      - type: Documentation
-        url: https://api.vehicles.dev/openapi.json
-  - name: Vehicles.dev REST API
-    description: >-
-      Live, billable REST API with ten GET endpoints under /v1/vehicles/ for VIN decode, specifications, recalls, market
-      value, depreciation, ownership costs, composite report, listings search, listing price history, and photos. Bearer
-      API key auth (vdev_ prefix), server-to-server only, RFC 9457 problem documents.
-    humanURL: https://vehicles.dev/docs
-    baseURL: https://api.vehicles.dev
-    tags:
-      - Automotive
-      - Vehicle Data
-      - VIN Decoding
-      - Vehicle Specifications
-      - Vehicle Safety
-      - Recalls
-      - Car Listings
-      - Marketplace
-      - Vehicle Valuation
-      - Pricing
-      - Depreciation
-      - Cost of Ownership
-      - Vehicle Images
-      - MCP
-      - Agent Tools
-      - Machine Learning
-    properties:
-      - type: OpenAPI
-        url: https://api.vehicles.dev/openapi.json
-      - type: Documentation
-        url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-admin-api
+  name: Vehicles.dev Admin API
+  description: The Admin API from Vehicles.dev — 4 operation(s) for admin.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Admin
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-admin-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-admin-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-billing-api
+  name: Vehicles.dev Billing API
+  description: The Billing API from Vehicles.dev — 14 operation(s) for billing.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Billing
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-billing-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-billing-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-control-api
+  name: Vehicles.dev Control API
+  description: The Control API from Vehicles.dev — 23 operation(s) for control.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Control
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-control-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-control-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-data-api
+  name: Vehicles.dev Data API
+  description: The Data API from Vehicles.dev — 12 operation(s) for data.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Data
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-data-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-data-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-employment-api
+  name: Vehicles.dev Employment API
+  description: The Employment API from Vehicles.dev — 2 operation(s) for employment.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Employment
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-employment-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-employment-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-operations-api
+  name: Vehicles.dev Operations API
+  description: The operations API from Vehicles.dev — 3 operation(s) for operations.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - operations
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-operations-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-operations-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-operator-api
+  name: Vehicles.dev Operator API
+  description: The Operator API from Vehicles.dev — 11 operation(s) for operator.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Operator
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-operator-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-operator-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-reports-api
+  name: Vehicles.dev Reports API
+  description: The Reports API from Vehicles.dev — 8 operation(s) for reports.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Reports
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-reports-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-reports-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-vehicles-api
+  name: Vehicles.dev Vehicles API
+  description: The Vehicles API from Vehicles.dev — 14 operation(s) for vehicles.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Vehicles
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-vehicles-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-vehicles-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
+- aid: vehicles-dev-api:vehicles-dev-api-webhooks-api
+  name: Vehicles.dev Webhooks API
+  description: The Webhooks API from Vehicles.dev — 1 operation(s) for webhooks.
+  humanURL: https://api.vehicles.dev
+  baseURL: https://api.vehicles.dev
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/vehicles-dev-api-webhooks-api-openapi.yml
+  - type: Overlay
+    url: overlays/vehicles-dev-api-webhooks-api-overlay.yaml
+  - type: Documentation
+    url: https://api.vehicles.dev/openapi.json
+  - type: Documentation
+    url: https://vehicles.dev/docs
 maintainers:
   - FN: Vehicles.dev API
     url: https://api.vehicles.dev
+    email: support@vehicles.dev
   - FN: Vehicles.dev
     url: https://vehicles.dev/
 generated:
@@ -102,3 +206,74 @@ generated:
   model: claude-opus-4-8
   confidence: 95
   at: '2026-08-15T22:11:41.807Z'
+common:
+- type: DomainSecurity
+  url: security/vehicles-dev-api-domain-security.yml
+- type: Authentication
+  url: authentication/vehicles-dev-api-authentication.yml
+- type: Website
+  url: https://vehicles.dev/
+- type: DeveloperPortal
+  url: https://vehicles.dev/dashboard
+- type: Documentation
+  url: https://vehicles.dev/docs
+- type: APIReference
+  url: https://vehicles.dev/docs
+- type: GettingStarted
+  url: https://vehicles.dev/docs#quickstart
+- type: Support
+  url: https://vehicles.dev/docs#support
+- type: Pricing
+  url: https://vehicles.dev/#pricing
+- type: SignUp
+  url: https://vehicles.dev/auth/sign-up
+- type: Login
+  url: https://vehicles.dev/auth/sign-in
+- type: UsageTerms
+  url: https://vehicles.dev/docs#support-terms
+- type: Plans
+  url: plans/vehicles-dev-api-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/vehicles-dev-api-rate-limits.yml
+- type: Conventions
+  url: conventions/vehicles-dev-api-conventions.yml
+- type: Idempotency
+  url: conventions/vehicles-dev-api-conventions.yml
+- type: ErrorCatalog
+  url: errors/vehicles-dev-api-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/vehicles-dev-api-lifecycle.yml
+- type: Conformance
+  url: conformance/vehicles-dev-api-conformance.yml
+- type: DataModel
+  url: data-model/vehicles-dev-api-data-model.yml
+- type: Packages
+  url: packages/vehicles-dev-api-packages.yml
+- type: MCPServer
+  url: mcp/vehicles-dev-api-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/vehicles-dev-api-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/vehicles-dev-api-llms.txt
+x-enrichment:
+  date: '2026-08-16'
+  status: enriched
+  artifacts_added: 29
+  pass: local-v1
+x-coverage:
+  state: covered
+  note: >-
+    Full public surface. The OpenAPI 3.1 document is served unauthenticated at
+    https://api.vehicles.dev/openapi.json (HTTP 200, 61 operations) and is byte-identical to the copy
+    already harvested at openapi/_original/. The reference at https://vehicles.dev/docs is
+    server-rendered and machine-readable, and carries published plans, per-endpoint prices, rate
+    limits, a full error-code catalog, conventions and a versioning/availability statement. Measured
+    absences, all confirmed by probe or by the provider's own words: no /.well-known/* document on
+    either host (9 paths x 2 hosts, all 404), no A2A agent card, no llms.txt (404), no status page,
+    no SLA, no changelog, no deprecation window, no separate terms-of-service or privacy page, no
+    client SDKs, no GraphQL, no AsyncAPI and no consumer webhooks. The remote MCP endpoint the docs
+    name, https://mcp.vehicles.dev/mcp, does not resolve (DNS NXDOMAIN), so the only agent surface is
+    the local stdio npm package vehicles-dev-mcp.
+  checked: '2026-08-16'

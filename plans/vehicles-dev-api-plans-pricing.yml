@@ -1,0 +1,150 @@
+generated: '2026-08-16'
+method: searched
+source: https://vehicles.dev/docs#pricing
+also_published_at: https://vehicles.dev/#pricing
+currency: USD
+billing_period: month
+price_catalog_version: '2026-08-07'
+plan_count: 3
+billing_model:
+  unit: per successful call, metered at the endpoint level
+  success_only: true
+  success_only_note: >-
+    Every endpoint is successOnly. A credit reservation is placed before the handler runs and settles
+    only on 2xx; any 4xx or 5xx — including 429 rate-limit rejections and upstream outages — releases
+    the reservation. A failed call costs nothing.
+  prepaid: true
+  prepaid_note: >-
+    Metered data fees are prepaid from credits on every plan. A paid plan buys the rate limit, the
+    lower unit prices and endpoint access — never an overage bill. Exhaustion returns
+    402 insufficient_credits.
+  free_credit: '$10 one-time credit balance on every new account; never resets; spendable on any endpoint priced on the Pro plan.'
+  catalog_pinning: >-
+    Prices are not quoted live at call time. A subscription pins a catalog version, every metered
+    event records the unit price actually applied, and a new catalog is adopted at the start of the
+    next UTC monthly period — so a price change never reprices past calls and never lands mid-period.
+  machine_readable_balance: false
+  machine_readable_balance_note: >-
+    Entitlement, credit balance and usage are visible only in the dashboard. Metered responses carry
+    no balance or usage headers, so a server-to-server integration cannot pre-flight burn-down;
+    402 insufficient_credits is the only programmatic signal.
+plans:
+  - name: Starter
+    price: 0
+    currency: USD
+    period: month
+    included_calls: 1000
+    included_calls_scope: >-
+      VIN Decode, Search Vehicle Listings and Vehicle Photos only. Resets on the UTC calendar month.
+    rate_limit: 5 req/second
+    trial: null
+    endpoint_exclusions: [Listing Price History]
+  - name: Pro
+    price: 299
+    currency: USD
+    period: month
+    included_calls: 0
+    included_calls_scope: None — every call metered on top of the platform fee.
+    rate_limit: 10 req/second
+    trial: 14 days
+    endpoint_exclusions: [Listing Price History]
+  - name: Scale
+    price: 599
+    currency: USD
+    period: month
+    included_calls: 0
+    included_calls_scope: None — every call metered on top of the platform fee.
+    rate_limit: 50 req/second
+    trial: 14 days
+    endpoint_exclusions: []
+metered_pricing:
+  note: Price per successful call, in USD. `null` means the endpoint is not sold on that plan and returns 403 plan_upgrade_required.
+  endpoints:
+    - endpoint: VIN Decode
+      operation: getVehicleVinDecode
+      unit: successful lookup
+      included_calls_apply: true
+      starter: 0.004
+      pro: 0.0025
+      scale: 0.0015
+    - endpoint: Vehicle Specifications
+      operation: getVehicleSpecifications
+      unit: successful lookup
+      included_calls_apply: false
+      starter: 0.0015
+      pro: 0.0015
+      scale: 0.001
+    - endpoint: Recalls & Safety
+      operation: getVehicleRecalls
+      unit: successful lookup
+      included_calls_apply: false
+      starter: 0.01
+      pro: 0.01
+      scale: 0.007
+    - endpoint: Market Value
+      operation: getVehicleMarketValue
+      unit: model estimate
+      included_calls_apply: false
+      starter: 0.015
+      pro: 0.015
+      scale: 0.01
+    - endpoint: Depreciation
+      operation: getVehicleDepreciation
+      unit: model forecast
+      included_calls_apply: false
+      starter: 0.015
+      pro: 0.015
+      scale: 0.01
+    - endpoint: Ownership Costs
+      operation: getVehicleOwnershipCosts
+      unit: model estimate
+      included_calls_apply: false
+      starter: 0.045
+      pro: 0.045
+      scale: 0.035
+    - endpoint: Legacy Composite Vehicle Report
+      operation: getVehicleReport
+      unit: report
+      included_calls_apply: false
+      starter: 1.99
+      pro: 1.99
+      scale: 0.99
+    - endpoint: Vehicle History Report
+      operation: createVehicleHistoryReport
+      unit: report
+      included_calls_apply: false
+      starter: 1.99
+      pro: 1.99
+      scale: 0.99
+      note: >-
+        Available on every plan. Starter accounts spend seed or promotional credits at the Pro rate;
+        reports do not consume Starter included calls. Billing settles only when a completed result is
+        stored — invalid VINs, failed generations and action_required outcomes do not settle a charge.
+    - endpoint: Search Vehicle Listings
+      operation: getVehicleListings
+      unit: successful API call
+      included_calls_apply: true
+      starter: 0.002
+      pro: 0.0015
+      scale: 0.001
+    - endpoint: Listing Price History
+      operation: getVehicleHistory
+      unit: history
+      included_calls_apply: false
+      starter: null
+      pro: null
+      scale: 0.006
+      note: Scale-only. Credits cannot buy it on Starter or Pro; both receive 403 plan_upgrade_required.
+    - endpoint: Vehicle Photos
+      operation: getVehiclePhotos
+      unit: successful lookup
+      included_calls_apply: true
+      starter: 0.001
+      pro: 0.0009
+      scale: 0.0007
+enterprise:
+  self_serve_only: false
+  note: >-
+    Bulk redistribution or resale of raw records needs a separate written agreement. Contractual
+    uptime commitments, redistribution licences, DPAs and vendor-security paperwork are negotiated by
+    email at support@vehicles.dev.

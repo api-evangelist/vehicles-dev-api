@@ -1,0 +1,887 @@
+openapi: 3.2.0
+info:
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  title: Vehicles.dev Admin API
+  version: 0.0.0
+servers:
+- description: Vehicles.dev API
+  url: https://api.vehicles.dev
+tags:
+- name: Admin
+paths:
+  /v1/ops/admin/snapshot:
+    get:
+      operationId: getOperatorAdminSnapshot
+      tags:
+      - Admin
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - accounts
+                - generatedAt
+                - limits
+                - members
+                - orders
+                - overview
+                - usage
+                properties:
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - billingInterval
+                      - cancelAtPeriodEnd
+                      - createdAt
+                      - creditBalanceMicros
+                      - id
+                      - lastUsedAt
+                      - memberCount
+                      - name
+                      - planId
+                      - renewsAt
+                      - status
+                      - subscriptionStatus
+                      - usageCalls30d
+                      - usageNetMicros30d
+                      properties:
+                        billingInterval:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - monthly
+                          - type: string
+                            enum:
+                            - annual
+                        cancelAtPeriodEnd:
+                          type: boolean
+                        createdAt:
+                          type: string
+                          format: date-time
+                        creditBalanceMicros:
+                          type: integer
+                          minimum: 0
+                        id:
+                          type: string
+                          format: uuid
+                        lastUsedAt:
+                          anyOf:
+                          - type: string
+                            format: date-time
+                          - type: 'null'
+                        memberCount:
+                          type: integer
+                          minimum: 0
+                        name:
+                          type: string
+                        planId:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - starter
+                          - type: string
+                            enum:
+                            - pro
+                          - type: string
+                            enum:
+                            - scale
+                        renewsAt:
+                          anyOf:
+                          - type: string
+                            format: date-time
+                          - type: 'null'
+                        status:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - active
+                          - type: string
+                            enum:
+                            - suspended
+                          - type: string
+                            enum:
+                            - deleted
+                        subscriptionStatus:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - active
+                          - type: string
+                            enum:
+                            - trialing
+                          - type: string
+                            enum:
+                            - past_due
+                          - type: string
+                            enum:
+                            - canceled
+                        usageCalls30d:
+                          type: integer
+                          minimum: 0
+                        usageNetMicros30d:
+                          type: integer
+                          minimum: 0
+                      additionalProperties: false
+                  generatedAt:
+                    type: string
+                    format: date-time
+                  limits:
+                    type: object
+                    required:
+                    - accounts
+                    - members
+                    - orders
+                    - recentUsage
+                    properties:
+                      accounts:
+                        type: object
+                        required:
+                        - limit
+                        - truncated
+                        properties:
+                          limit:
+                            type: number
+                            enum:
+                            - 200
+                          truncated:
+                            type: boolean
+                        additionalProperties: false
+                      members:
+                        type: object
+                        required:
+                        - limit
+                        - truncated
+                        properties:
+                          limit:
+                            type: number
+                            enum:
+                            - 300
+                          truncated:
+                            type: boolean
+                        additionalProperties: false
+                      orders:
+                        type: object
+                        required:
+                        - limit
+                        - truncated
+                        properties:
+                          limit:
+                            type: number
+                            enum:
+                            - 200
+                          truncated:
+                            type: boolean
+                        additionalProperties: false
+                      recentUsage:
+                        type: object
+                        required:
+                        - limit
+                        - truncated
+                        properties:
+                          limit:
+                            type: number
+                            enum:
+                            - 200
+                          truncated:
+                            type: boolean
+                        additionalProperties: false
+                    additionalProperties: false
+                  members:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - accountId
+                      - accountName
+                      - id
+                      - joinedAt
+                      - principalId
+                      - providerUserId
+                      - role
+                      - status
+                      properties:
+                        accountId:
+                          type: string
+                          format: uuid
+                        accountName:
+                          type: string
+                        id:
+                          type: string
+                          format: uuid
+                        joinedAt:
+                          type: string
+                          format: date-time
+                        principalId:
+                          type: string
+                          format: uuid
+                        providerUserId:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                        role:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - owner
+                          - type: string
+                            enum:
+                            - admin
+                          - type: string
+                            enum:
+                            - developer
+                          - type: string
+                            enum:
+                            - billing
+                        status:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - active
+                          - type: string
+                            enum:
+                            - removed
+                      additionalProperties: false
+                  orders:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - accountId
+                      - accountName
+                      - amountMicros
+                      - description
+                      - id
+                      - kind
+                      - occurredAt
+                      - reference
+                      properties:
+                        accountId:
+                          type: string
+                          format: uuid
+                        accountName:
+                          type: string
+                        amountMicros:
+                          type: integer
+                        description:
+                          type: string
+                        id:
+                          type: string
+                          format: uuid
+                        kind:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - purchase
+                          - type: string
+                            enum:
+                            - promotion
+                          - type: string
+                            enum:
+                            - refund
+                          - type: string
+                            enum:
+                            - adjustment
+                        occurredAt:
+                          type: string
+                          format: date-time
+                        reference:
+                          anyOf:
+                          - type: string
+                          - type: 'null'
+                      additionalProperties: false
+                  overview:
+                    type: object
+                    required:
+                    - activeAccounts
+                    - activeSubscriptions
+                    - apiCalls30d
+                    - members
+                    - netUsageMicros30d
+                    - orders30d
+                    properties:
+                      activeAccounts:
+                        type: integer
+                        minimum: 0
+                      activeSubscriptions:
+                        type: integer
+                        minimum: 0
+                      apiCalls30d:
+                        type: integer
+                        minimum: 0
+                      members:
+                        type: integer
+                        minimum: 0
+                      netUsageMicros30d:
+                        type: integer
+                        minimum: 0
+                      orders30d:
+                        type: integer
+                        minimum: 0
+                    additionalProperties: false
+                  usage:
+                    type: object
+                    required:
+                    - byMetric
+                    - daily
+                    - recent
+                    properties:
+                      byMetric:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - calls
+                          - metricId
+                          - netAmountMicros
+                          - quantity
+                          properties:
+                            calls:
+                              type: integer
+                              minimum: 0
+                            metricId:
+                              type: string
+                            netAmountMicros:
+                              type: integer
+                              minimum: 0
+                            quantity:
+                              type: integer
+                              minimum: 0
+                          additionalProperties: false
+                      daily:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - calls
+                          - day
+                          - netAmountMicros
+                          - quantity
+                          properties:
+                            calls:
+                              type: integer
+                              minimum: 0
+                            day:
+                              type: string
+                              pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}$
+                            netAmountMicros:
+                              type: integer
+                              minimum: 0
+                            quantity:
+                              type: integer
+                              minimum: 0
+                          additionalProperties: false
+                      recent:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - accountId
+                          - accountName
+                          - id
+                          - metricId
+                          - netAmountMicros
+                          - occurredAt
+                          - quantity
+                          properties:
+                            accountId:
+                              type: string
+                              format: uuid
+                            accountName:
+                              type: string
+                            id:
+                              type: string
+                              format: uuid
+                            metricId:
+                              type: string
+                            netAmountMicros:
+                              type: integer
+                              minimum: 0
+                            occurredAt:
+                              type: string
+                              format: date-time
+                            quantity:
+                              type: integer
+                              minimum: 0
+                          additionalProperties: false
+                    additionalProperties: false
+                additionalProperties: false
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/ops/admin/accounts/{accountProductId}/orders/{orderId}/refund:
+    post:
+      operationId: refundOperatorAdminOrder
+      tags:
+      - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - operationId
+              - reason
+              properties:
+                amountMicros:
+                  type: integer
+                  minimum: 10000
+                  multipleOf: 10000
+                operationId:
+                  type: string
+                  format: uuid
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 1
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: accountProductId
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: orderId
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - amountMicros
+                - creditBalanceMicros
+                - creditReversalApplied
+                - refundId
+                - status
+                properties:
+                  amountMicros:
+                    type: integer
+                    minimum: 1
+                  creditBalanceMicros:
+                    type: integer
+                    minimum: 0
+                  creditReversalApplied:
+                    type: boolean
+                  refundId:
+                    type: string
+                    minLength: 1
+                  status:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/ops/admin/accounts/{accountProductId}/subscription/plan:
+    post:
+      operationId: changeOperatorAdminSubscriptionPlan
+      tags:
+      - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - operationId
+              - planId
+              - reason
+              properties:
+                operationId:
+                  type: string
+                  format: uuid
+                planId:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - pro
+                  - type: string
+                    enum:
+                    - scale
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 1
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: accountProductId
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - applied
+                - billingInterval
+                - cancelAtPeriodEnd
+                - planId
+                - renewsAt
+                - status
+                properties:
+                  applied:
+                    type: boolean
+                  billingInterval:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - monthly
+                    - type: string
+                      enum:
+                      - annual
+                  cancelAtPeriodEnd:
+                    type: boolean
+                  planId:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - starter
+                    - type: string
+                      enum:
+                      - pro
+                    - type: string
+                      enum:
+                      - scale
+                  renewsAt:
+                    anyOf:
+                    - type: string
+                      format: date-time
+                    - type: 'null'
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - trialing
+                    - type: string
+                      enum:
+                      - past_due
+                    - type: string
+                      enum:
+                      - canceled
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/ops/admin/accounts/{accountProductId}/subscription/cancellation:
+    post:
+      operationId: setOperatorAdminSubscriptionCancellation
+      tags:
+      - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cancelAtPeriodEnd
+              - operationId
+              - reason
+              properties:
+                cancelAtPeriodEnd:
+                  type: boolean
+                operationId:
+                  type: string
+                  format: uuid
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 1
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: accountProductId
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - applied
+                - billingInterval
+                - cancelAtPeriodEnd
+                - planId
+                - renewsAt
+                - status
+                properties:
+                  applied:
+                    type: boolean
+                  billingInterval:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - monthly
+                    - type: string
+                      enum:
+                      - annual
+                  cancelAtPeriodEnd:
+                    type: boolean
+                  planId:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - starter
+                    - type: string
+                      enum:
+                      - pro
+                    - type: string
+                      enum:
+                      - scale
+                  renewsAt:
+                    anyOf:
+                    - type: string
+                      format: date-time
+                    - type: 'null'
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - trialing
+                    - type: string
+                      enum:
+                      - past_due
+                    - type: string
+                      enum:
+                      - canceled
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+components:
+  schemas:
+    def-0:
+      type: object
+      required:
+      - code
+      - detail
+      - request_id
+      - retryable
+      - status
+      - title
+      - type
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        instance:
+          type: string
+        invalid_params:
+          type: array
+          items:
+            type: object
+            required:
+            - name
+            - pointer
+            - reason
+            properties:
+              name:
+                type: string
+              pointer:
+                type: string
+              reason:
+                type: string
+            additionalProperties: false
+        request_id:
+          type: string
+        retryable:
+          type: boolean
+        status:
+          type: integer
+          maximum: 599
+          minimum: 400
+        title:
+          type: string
+        type:
+          type: string
+          format: uri
+      additionalProperties: false
+      title: Problem
+  securitySchemes:
+    apiKeyBearer:
+      bearerFormat: Product API key
+      scheme: bearer
+      type: http
+    workosBearer:
+      bearerFormat: WorkOS access token
+      scheme: bearer
+      type: http

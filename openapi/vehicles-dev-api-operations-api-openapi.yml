@@ -1,0 +1,156 @@
+openapi: 3.2.0
+info:
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  title: Vehicles.dev Operations API
+  version: 0.0.0
+servers:
+- description: Vehicles.dev API
+  url: https://api.vehicles.dev
+tags:
+- name: operations
+paths:
+  /health/live:
+    get:
+      operationId: getApiLiveness
+      tags:
+      - operations
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - environment
+                - service
+                - status
+                properties:
+                  environment:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                    - live
+                additionalProperties: false
+  /health/ready:
+    get:
+      operationId: getApiReadiness
+      tags:
+      - operations
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - checks
+                - environment
+                - service
+                - status
+                properties:
+                  checks:
+                    type: object
+                    required:
+                    - database
+                    properties:
+                      database:
+                        type: object
+                        required:
+                        - status
+                        properties:
+                          detail:
+                            type: string
+                          status:
+                            anyOf:
+                            - type: string
+                              enum:
+                              - pass
+                            - type: string
+                              enum:
+                              - fail
+                        additionalProperties: false
+                    additionalProperties: false
+                  environment:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - ready
+                    - type: string
+                      enum:
+                      - unready
+                additionalProperties: false
+        '503':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - checks
+                - environment
+                - service
+                - status
+                properties:
+                  checks:
+                    type: object
+                    required:
+                    - database
+                    properties:
+                      database:
+                        type: object
+                        required:
+                        - status
+                        properties:
+                          detail:
+                            type: string
+                          status:
+                            anyOf:
+                            - type: string
+                              enum:
+                              - pass
+                            - type: string
+                              enum:
+                              - fail
+                        additionalProperties: false
+                    additionalProperties: false
+                  environment:
+                    type: string
+                  service:
+                    type: string
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - ready
+                    - type: string
+                      enum:
+                      - unready
+                additionalProperties: false
+  /openapi.json:
+    get:
+      operationId: getOpenApiDocument
+      tags:
+      - operations
+      description: Returns the OpenAPI 3.1 document describing every published operation.
+      responses:
+        '200':
+          description: Default Response
+components:
+  securitySchemes:
+    apiKeyBearer:
+      bearerFormat: Product API key
+      scheme: bearer
+      type: http
+    workosBearer:
+      bearerFormat: WorkOS access token
+      scheme: bearer
+      type: http

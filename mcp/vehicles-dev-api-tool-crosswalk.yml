@@ -1,0 +1,154 @@
+generated: '2026-08-16'
+method: derived
+source: mcp/vehicles-dev-api-mcp.yml + openapi/_original/vehicles-dev-api-openapi.json
+note: >-
+  Vehicles.dev is a rare clean case: the MCP server is a 1:1 projection of the ten documented
+  /v1/vehicles/* GET endpoints, and the provider's own tool table names the backing endpoint for each
+  tool, so every binding is high confidence with no name-guessing. Every operationId below was
+  verified verbatim against the OpenAPI 3.1 document served at https://api.vehicles.dev/openapi.json.
+surfaces:
+  openapi:
+    file: openapi/_original/vehicles-dev-api-openapi.json
+    live: https://api.vehicles.dev/openapi.json
+    gated: false
+    operations: 61
+  graphql:
+    endpoint: null
+    note: No GraphQL surface exists.
+  mcp:
+    transport: stdio
+    package: vehicles-dev-mcp
+    tools_list_gated: true
+    note: >-
+      tools/list could not be introspected live — the server is stdio-only and mcp.vehicles.dev does
+      not resolve. Tool names and backing endpoints come from the provider's published tool table.
+crosswalk:
+  - tool: decode_vin
+    category: identity
+    rest: [getVehicleVinDecode]
+    binding: rest
+    confidence: high
+  - tool: get_specifications
+    category: identity
+    rest: [getVehicleSpecifications]
+    binding: rest
+    confidence: high
+  - tool: get_recalls
+    category: safety
+    rest: [getVehicleRecalls]
+    binding: rest
+    confidence: high
+  - tool: get_vehicle_photos
+    category: media
+    rest: [getVehiclePhotos]
+    binding: rest
+    confidence: high
+  - tool: search_listings
+    category: marketplace
+    rest: [getVehicleListings]
+    binding: rest
+    confidence: high
+    note: The only paginated operation — limit (1-500, default 50) and offset against total.
+  - tool: get_listing_history
+    category: marketplace
+    rest: [getVehicleHistory]
+    binding: rest
+    confidence: high
+    note: Scale plan only; other plans receive 403 plan_upgrade_required.
+  - tool: get_market_value
+    category: valuation
+    rest: [getVehicleMarketValue]
+    binding: rest
+    confidence: high
+  - tool: get_depreciation
+    category: valuation
+    rest: [getVehicleDepreciation]
+    binding: rest
+    confidence: high
+  - tool: get_ownership_costs
+    category: valuation
+    rest: [getVehicleOwnershipCosts]
+    binding: rest
+    confidence: high
+  - tool: get_vehicle_report
+    category: composite
+    rest: [getVehicleReport]
+    binding: rest
+    confidence: high
+    note: Legacy composite of identity + value + depreciation; most expensive operation on the API.
+mcp_only: []
+rest_only:
+  - capability: Vehicle history reports (asynchronous, account-owned)
+    operations:
+      - createVehicleHistoryReport
+      - retryVehicleHistoryReportSubmission
+      - getVehicleHistoryReportStatus
+      - getVehicleHistoryReportResult
+    reason: >-
+      The only write flow on the data plane. The MCP server exposes read-only GET tools annotated
+      readOnlyHint, so the $1.99 report order — an irreversible billable write requiring an
+      Idempotency-Key — is deliberately not agent-callable.
+  - capability: Employment / labour-market data
+    operations: [getEmploymentJobs, getEmploymentMarketAnalytics]
+    reason: Sold on the same vdev_ key but outside the vehicle tool set; no MCP tool exists.
+  - capability: Account & billing control plane
+    operations:
+      - provisionControlIdentity
+      - getControlAccount
+      - updateControlAccount
+      - deleteControlAccount
+      - getControlDashboardActions
+      - getControlBillingCatalog
+      - getControlBillingSummary
+      - getControlBillingUsage
+      - getControlBillingOrders
+      - getControlBillingInvoices
+      - createControlBillingCheckout
+      - createControlBillingSubscriptionCheckout
+      - changeControlBillingSubscription
+      - cancelControlBillingSubscription
+      - listControlMembers
+      - updateControlMember
+      - removeControlMember
+      - listControlInvitations
+      - createControlInvitation
+      - acceptControlInvitation
+      - revokeControlInvitation
+      - listControlApiKeys
+      - createControlApiKey
+      - revokeControlApiKey
+      - updateControlApiKey
+      - createControlVehicleHistoryReport
+      - listControlVehicleHistoryReports
+      - retryControlVehicleHistoryReportSubmission
+      - getControlVehicleHistoryReportStatus
+      - getControlVehicleHistoryReportResult
+    reason: >-
+      Requires a WorkOS dashboard session token (workosBearer). A vdev_ API key is rejected with
+      401 invalid_credential, so these are not reachable by any agent holding only an API key.
+  - capability: Operator / admin plane
+    operations:
+      - getOperatorIdentity
+      - getOperatorAdminSnapshot
+      - refundOperatorAdminOrder
+      - changeOperatorAdminSubscriptionPlan
+      - setOperatorAdminSubscriptionCancellation
+      - requestBreakGlassLease
+      - approveBreakGlassLease
+      - revokeBreakGlassLease
+      - listInvitationSecurityReviews
+      - resolveInvitationSecurityReview
+      - grantOperatorBillingCredit
+    reason: Internal operator routes behind a WorkOS token; not a customer surface.
+  - capability: Health probes, spec self-serve, payment webhook receiver
+    operations: [getApiLiveness, getApiReadiness, getOpenApiDocument, receivePaymentWebhook]
+    reason: Infrastructure routes, not product capabilities.
+coverage:
+  tools_named: 10
+  tools_bound: 10
+  tools_unbound: 0
+  mcp_only: 0
+  rest_operations_total: 61
+  rest_operations_with_tool: 10
+  rest_operations_customer_callable_with_api_key: 16
+  rest_operations_without_tool: 51

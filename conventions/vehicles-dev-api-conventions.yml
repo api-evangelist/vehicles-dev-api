@@ -1,0 +1,151 @@
+generated: '2026-08-16'
+method: searched
+source: https://vehicles.dev/docs#conventions
+sources:
+  - https://vehicles.dev/docs#conventions
+  - https://vehicles.dev/docs#authentication
+  - https://vehicles.dev/docs#errors
+  - https://vehicles.dev/docs#vehicle-history-reports
+  - https://vehicles.dev/docs#lifecycle
+  - openapi/_original/vehicles-dev-api-openapi.json
+transport:
+  protocol: HTTPS
+  base_url: https://api.vehicles.dev
+  media_type: application/json
+  browser_callable: false
+  browser_callable_note: >-
+    Deliberately server-to-server. No CORS headers are served, cookie authentication is rejected
+    (401 cookie_credentials_rejected), and a request carrying an Origin or
+    Access-Control-Request-Method header is refused with 404 route_not_found.
+authentication:
+  style: bearer token
+  header: 'Authorization: Bearer <key>'
+  key_prefix: vdev_
+  case_sensitive: true
+  case_sensitive_note: 'Exactly "Bearer" plus one space; "bearer" or a double space is 401 invalid_credential.'
+  alternatives: none
+  alternatives_note: No query-string keys, no basic auth, no cookies.
+  control_plane: WorkOS dashboard session token (workosBearer) for /v1/control/* and /v1/ops/*
+  rotation: create-then-revoke; revocation is immediate
+  see: authentication/vehicles-dev-api-authentication.yml
+idempotency:
+  supported: true
+  header: Idempotency-Key
+  format: UUID
+  scope: createVehicleHistoryReport (POST /v1/vehicles/history-reports)
+  required: true
+  conflict_behavior: >-
+    Reusing one Idempotency-Key with the same VIN returns the existing report. Reusing it for a
+    different VIN returns 409 idempotency_conflict.
+  retention: not published
+  read_safety: >-
+    All ten data endpoints are GETs and mutate nothing, so any read is safe to repeat. The metering
+    layer is additionally idempotent on the request id, so a retry never double-charges a single
+    request.
+  durable_retry: >-
+    POST /v1/vehicles/history-reports/{id}/retry resubmits with the original stored provider
+    idempotency key, and is for a durable local status=submitting after an uncertain create response.
+    Read-only status polling never performs a submission.
+pagination:
+  style: limit/offset
+  scope: getVehicleListings only
+  scope_note: Every other endpoint is a single-object lookup. No cursors, no Link headers.
+  parameters:
+    - {name: limit, in: query, min: 1, max: 500, default: 50}
+    - {name: offset, in: query}
+  response_fields: [total]
+async_workflow:
+  present: true
+  pattern: 202 + Location + Retry-After, then poll, then read result
+  create: POST /v1/vehicles/history-reports
+  status: GET /v1/vehicles/history-reports/{id}
+  result: GET /v1/vehicles/history-reports/{id}/result
+  states: [submitting, queued, processing, action_required, completed]
+  readiness_flag: hasResult
+  polling: Respect the server-supplied Retry-After; reading early returns retryable 409 report_not_ready.
+naming:
+  envelope_case: camelCase
+  nested_case: snake_case
+  nested_case_note: >-
+    Pass-through objects and arrays — vehicle, specifications, inputs, results, observations, recalls,
+    identity, byModelYear elements — keep their upstream snake_case keys. The asymmetry is deliberate
+    and stable.
+nulls:
+  policy: omit
+  note: >-
+    null is a first-class "unknown", and some objects omit null keys entirely rather than emitting
+    them. Treat every nested field as optional. A key disappearing from a null-omitting object is
+    explicitly NOT a breaking change.
+dates:
+  format: ISO-8601
+  exceptions:
+    - field: recall report_date
+      note: NHTSA supplies inconsistent formats and Vehicles.dev passes them through verbatim.
+  observation_timestamps: [firstSeen, lastSeen, observed_at]
+money:
+  data_endpoints: whole US dollars (estimateUsd, annualFuelCostUsd, listing price)
+  billing_endpoints: USD micros (1,000,000 micros = $1)
+  warning: Do not mix the two representations.
+query_handling:
+  coercion: Query strings are coerced to the declared integer and boolean types.
+  unknown_parameters: rejected
+  unknown_parameters_note: Every query schema is closed; an unknown parameter is 400 request_validation_failed, not a silent drop.
+  path_normalization: VINs in the path are upper-cased server-side.
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: false
+  provenance_fields:
+    - {field: source, scope: every successful body}
+    - {field: origin, scope: 'VIN-keyed lookups — "store" when served from the crawled dataset, "vpic" when decoded live'}
+    - {field: coverage, scope: composite report — array naming which sections resolved}
+    - {field: inputs, scope: valuation responses — echoes the exact feature vector the model scored}
+request_tracing:
+  header: x-request-id
+  present_on: every response
+  client_supplied: ignored, never echoed
+  body_mirror: request_id in every problem document
+versioning:
+  scheme: uri-path
+  current: v1
+  version_header: none
+  date_pinning: none
+  account_pinning: none
+  note: There is exactly one API version; the /v1/ path prefix is the contract.
+  see: lifecycle/vehicles-dev-api-lifecycle.yml
+error_envelope:
+  format: rfc9457
+  media_type: application/problem+json
+  branch_on: code
+  see: errors/vehicles-dev-api-problem-types.yml
+rate_limit_signaling:
+  headers: [retry-after]
+  ratelimit_headers: false
+  ratelimit_headers_note: 'The docs state: "There are no x-ratelimit-* headers."'
+  see: rate-limits/vehicles-dev-api-rate-limits.yml
+timeouts:
+  per_endpoint_upstream_budget_seconds: [5, 10, 15]
+  guidance: >-
+    Set the client timeout above the endpoint's budget so you receive the API's 503 problem document
+    rather than timing out blind.
+events:
+  consumer_webhooks: false
+  streaming: false
+  note: >-
+    The only webhook route in the contract is POST /webhooks/payments/{product}, an INBOUND receiver
+    for the payment processor. There is no consumer-subscribable event surface, no AsyncAPI and no
+    streaming API, so no Webhooks or AsyncAPI pointer is emitted.
+caching:
+  headers: [cache-control]
+  note: >-
+    The full set of non-standard response headers is x-request-id, retry-after and cache-control.
+    Vehicle Specifications, Recalls and Ownership Costs are live upstream and uncached; Depreciation
+    and Market Value are precomputed and stable between refreshes.
+related:
+  - authentication/vehicles-dev-api-authentication.yml
+  - errors/vehicles-dev-api-problem-types.yml
+  - lifecycle/vehicles-dev-api-lifecycle.yml
+  - rate-limits/vehicles-dev-api-rate-limits.yml
+  - plans/vehicles-dev-api-plans-pricing.yml

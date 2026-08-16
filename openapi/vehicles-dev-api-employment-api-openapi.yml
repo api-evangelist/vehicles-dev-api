@@ -1,0 +1,254 @@
+openapi: 3.2.0
+info:
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  title: Vehicles.dev Employment API
+  version: 0.0.0
+servers:
+- description: Vehicles.dev API
+  url: https://api.vehicles.dev
+tags:
+- name: Employment
+paths:
+  /v1/employment/jobs:
+    get:
+      operationId: getEmploymentJobs
+      tags:
+      - Employment
+      security:
+      - apiKeyBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - jobs
+                - query
+                - source
+                properties:
+                  jobs:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - company
+                      - id
+                      - title
+                      properties:
+                        company:
+                          type: string
+                        id:
+                          type: string
+                        title:
+                          type: string
+                      additionalProperties: false
+                  query:
+                    type: string
+                  source:
+                    type: string
+                    enum:
+                    - dummy
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/employment/market-analytics:
+    get:
+      operationId: getEmploymentMarketAnalytics
+      tags:
+      - Employment
+      security:
+      - apiKeyBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - medianSalaryUsd
+                - postings30d
+                - role
+                - source
+                - yoyGrowthPct
+                properties:
+                  medianSalaryUsd:
+                    type: integer
+                  postings30d:
+                    type: integer
+                  role:
+                    type: string
+                  source:
+                    type: string
+                    enum:
+                    - dummy
+                  yoyGrowthPct:
+                    type: number
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+components:
+  schemas:
+    def-0:
+      type: object
+      required:
+      - code
+      - detail
+      - request_id
+      - retryable
+      - status
+      - title
+      - type
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        instance:
+          type: string
+        invalid_params:
+          type: array
+          items:
+            type: object
+            required:
+            - name
+            - pointer
+            - reason
+            properties:
+              name:
+                type: string
+              pointer:
+                type: string
+              reason:
+                type: string
+            additionalProperties: false
+        request_id:
+          type: string
+        retryable:
+          type: boolean
+        status:
+          type: integer
+          maximum: 599
+          minimum: 400
+        title:
+          type: string
+        type:
+          type: string
+          format: uri
+      additionalProperties: false
+      title: Problem
+  securitySchemes:
+    apiKeyBearer:
+      bearerFormat: Product API key
+      scheme: bearer
+      type: http
+    workosBearer:
+      bearerFormat: WorkOS access token
+      scheme: bearer
+      type: http

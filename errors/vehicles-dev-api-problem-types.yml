@@ -1,0 +1,159 @@
+generated: '2026-08-16'
+method: searched
+source: https://vehicles.dev/docs#errors
+derived_from: openapi/_original/vehicles-dev-api-openapi.json
+format: rfc9457
+media_type: application/problem+json
+envelope:
+  closed: true
+  closed_note: >-
+    No fields beyond those below ever appear, but key order is not stable — parse the JSON rather than
+    pattern-matching the string.
+  fields:
+    - {name: code, type: string, required: true, description: 'Stable machine-readable slug in snake_case. Branch on this, never on the prose in detail.'}
+    - {name: detail, type: string, required: true, description: Human-readable explanation of this specific occurrence.}
+    - {name: instance, type: string, required: false, description: The request path including query string that produced the error.}
+    - {name: invalid_params, type: array, required: false, description: 'Present only on 400 request_validation_failed. Each entry is {name, pointer, reason} — the failing schema keyword, a JSON pointer into the request, and the validator message.'}
+    - {name: request_id, type: string, required: true, description: Server-generated UUID, identical to the x-request-id response header.}
+    - {name: retryable, type: boolean, required: true, description: Whether repeating the identical request can plausibly succeed.}
+    - {name: status, type: integer, required: true, description: Mirrors the HTTP status code.}
+    - {name: title, type: string, required: true, description: Short status-level summary.}
+    - {name: type, type: string (URI), required: true, description: 'Opaque problem-type URI — an identifier, not a documentation link.'}
+type_uri_caveat: >-
+  The type URI is normally the code with underscores replaced by hyphens, but not always:
+  request_validation_failed is emitted with .../problems/request-validation, without the -failed
+  suffix. Branch on `code`. Observed type URIs are served under the platform host
+  https://api.data-platform.dev/problems/, not under api.vehicles.dev.
+tracing:
+  header: x-request-id
+  present_on: every response, success or failure
+  client_supplied: ignored and not echoed
+  note: >-
+    Authorization and Cookie headers are redacted from provider logs, so the request id is the only
+    way support can locate a specific call.
+ordering_note: >-
+  Authentication runs before schema validation. A request that is both unauthenticated and malformed
+  returns 401, never 400.
+problems:
+  - status: 400
+    code: request_validation_failed
+    type: https://api.data-platform.dev/problems/request-validation
+    title: Bad Request
+    retryable: false
+    scope: all endpoints
+    detail: >-
+      A path, query or body value failed its schema. Unknown query parameters are rejected rather than
+      ignored — every query schema is closed.
+    remediation: Read invalid_params for the JSON pointer and validator message, correct the value, resend.
+  - status: 401
+    code: authentication_required
+    type: https://api.data-platform.dev/problems/authentication-required
+    title: Unauthorized
+    retryable: false
+    scope: all endpoints
+    detail: No Authorization header was sent.
+    remediation: 'Send Authorization: Bearer <vdev_ key>.'
+  - status: 401
+    code: invalid_credential
+    title: Unauthorized
+    retryable: false
+    scope: all endpoints
+    detail: >-
+      The bearer value is malformed, or the key is unknown, revoked, or minted for a different
+      product. Also returned when a vdev_ API key is presented to a control-plane or operator route.
+    remediation: Mint a Vehicles.dev key in the dashboard; verify the scheme token is exactly "Bearer" plus one space.
+  - status: 401
+    code: cookie_credentials_rejected
+    title: Unauthorized
+    retryable: false
+    scope: all endpoints
+    detail: The request carried a Cookie header. Cookie authentication is never accepted on /v1.
+    remediation: Send only the Authorization header. Call from a backend, not a browser.
+  - status: 401
+    code: invalid_origin
+    title: Unauthorized
+    retryable: false
+    scope: all endpoints
+    detail: The request reached /v1 without resolving to a product.
+  - status: 402
+    code: insufficient_credits
+    title: Payment Required
+    retryable: false
+    scope: all metered endpoints
+    detail: >-
+      Included calls are exhausted and the credit balance cannot cover this request. Metered data fees
+      are prepaid from credits on every plan.
+    remediation: Add credits or upgrade the plan. Treat as an expected outcome — there is no balance header to pre-flight.
+  - status: 403
+    code: plan_upgrade_required
+    title: Forbidden
+    retryable: false
+    scope: Listing Price History (getVehicleHistory)
+    detail: The endpoint is not sold on the current plan. Today this only affects Listing Price History, which is Scale-only.
+    remediation: Upgrade to Scale. Credits cannot buy access on Starter or Pro.
+  - status: 403
+    code: subscription_inactive
+    title: Forbidden
+    retryable: false
+    scope: all endpoints
+    detail: The account's subscription is not active or trialing.
+  - status: 404
+    code: route_not_found
+    title: Not Found
+    retryable: false
+    scope: all endpoints
+    detail: >-
+      Unknown path — or a request whose Host header did not resolve to a product, or that carried an
+      Origin / Access-Control-Request-Method header. The API is not browser-callable and serves no
+      CORS headers.
+  - status: 429
+    code: rate_limit_exceeded
+    title: Too Many Requests
+    retryable: true
+    scope: all endpoints
+    detail: The plan's requests-per-second limit was exceeded.
+    remediation: Honour the retry-after header (whole seconds). The billing reservation is released, so the rejected call is free.
+  - status: 500
+    code: internal_error
+    title: Internal Server Error
+    retryable: true
+    scope: all endpoints
+    detail: An unmapped server failure.
+    remediation: Retry with exponential backoff and keep the request id.
+  - status: 503
+    code: authentication_unavailable
+    title: Service Unavailable
+    retryable: true
+    scope: all endpoints
+    detail: The API-key verifier is unreachable.
+    remediation: Retry with backoff.
+  - status: 409
+    code: idempotency_conflict
+    title: Conflict
+    retryable: false
+    scope: createVehicleHistoryReport
+    detail: An Idempotency-Key was reused with a different VIN.
+    remediation: Use a fresh UUID Idempotency-Key per distinct VIN. Reusing a key with the same VIN returns the existing report.
+  - status: 409
+    code: report_not_ready
+    title: Conflict
+    retryable: true
+    scope: getVehicleHistoryReportResult
+    detail: The result was read before status=completed and hasResult=true.
+    remediation: Poll getVehicleHistoryReportStatus at the Retry-After cadence first.
+  - status: 429
+    code: report_rate_limited
+    title: Too Many Requests
+    retryable: true
+    scope: createVehicleHistoryReport, retryVehicleHistoryReportSubmission
+    detail: The upstream history-report provider throttled the submission.
+    remediation: Retry with backoff.
+spec_coverage:
+  note: >-
+    Derived cross-check against the OpenAPI 3.1 document: all 61 operations declare problem responses.
+    Data-plane operations (/v1/vehicles/*, /v1/employment/*) declare 400, 401, 402, 403, 404, 409, 429,
+    500, 503; the history-report operations add 502. Control and operator operations declare 400, 401,
+    403, 404, 409, 429, 500, 503. The spec models every error body against a single shared problem
+    schema (components.schemas["def-0"]), so it carries the shape but not the per-code catalog above —
+    that catalog exists only in the docs.
+  statuses_in_spec: [200, 201, 202, 204, 400, 401, 402, 403, 404, 409, 429, 500, 502, 503]

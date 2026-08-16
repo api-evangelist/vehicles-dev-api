@@ -1,0 +1,124 @@
+generated: '2026-08-16'
+method: searched
+status: published
+source: https://vehicles.dev/docs#mcp
+sources:
+  - https://vehicles.dev/docs#mcp
+  - https://registry.npmjs.org/vehicles-dev-mcp
+deployment:
+  mode: local-stdio
+  endpoint: null
+  install: npx -y vehicles-dev-mcp
+  package: https://www.npmjs.com/package/vehicles-dev-mcp
+  auth: api-key
+  verified: probed
+deployment_note: >-
+  Local stdio ONLY. The docs describe an intended remote endpoint at https://mcp.vehicles.dev/mcp for
+  the Claude API's remote-MCP feature, and state plainly that "the Render service, DNS and TLS must be
+  live before clients can use it". Probed 2026-08-16: mcp.vehicles.dev returns DNS NXDOMAIN and no
+  HTTPS listener exists, so there is no reachable remote agent surface today. An agent cannot call
+  Vehicles.dev without a human first configuring an MCP client to launch the npm package.
+server:
+  name: vehicles-dev
+  transport: stdio
+  package: vehicles-dev-mcp
+  package_version: 0.1.0
+  package_published: '2026-08-14'
+  license: MIT
+  runtime: Node.js 20+
+  url: null
+  planned_remote_url: https://mcp.vehicles.dev/mcp
+  planned_remote_status: not-resolving
+authentication:
+  mechanism: environment variable
+  variable: VEHICLES_API_KEY
+  header_sent: 'Authorization: Bearer <key>'
+  key_prefix: vdev_
+  note: >-
+    The key stays in the server process environment; the model never sees it and the server redacts it
+    out of any text a tool returns. A missing key makes the server exit non-zero at launch rather than
+    starting and failing every call with a 401.
+configuration:
+  - variable: VEHICLES_API_KEY
+    required: true
+    description: Vehicles.dev product API key sent as a bearer credential on every tool call.
+  - variable: VEHICLES_API_BASE_URL
+    required: false
+    default: https://api.vehicles.dev
+    description: Origin the /v1/vehicles/ paths resolve against; for pointing at a staging deployment.
+  - variable: VEHICLES_API_TIMEOUT_MS
+    required: false
+    range: 1-600000
+    default: "each tool's own budget: 10, 15 or 20 s"
+    description: Replaces every per-tool timeout.
+clients_documented:
+  - {client: Claude Desktop, config: ~/Library/Application Support/Claude/claude_desktop_config.json}
+  - {client: Claude Code, config: 'claude mcp add --env VEHICLES_API_KEY=... --transport stdio vehicles-dev -- npx -y vehicles-dev-mcp'}
+  - {client: Cursor, config: .cursor/mcp.json}
+  - {client: VS Code 1.99+ Agent mode, config: .vscode/mcp.json}
+tool_count: 10
+tools_schema_note: >-
+  Tool names, backing endpoints and descriptions are taken verbatim from the provider's published tool
+  table at https://vehicles.dev/docs#mcp-tools. Full inputSchemas were not introspected because the
+  server is stdio-only and was not executed; each tool's real input contract is the linked OpenAPI
+  operation's parameters (see mcp/vehicles-dev-api-tool-crosswalk.yml).
+tools:
+  - name: decode_vin
+    description: What car is this VIN? Cheapest identity lookup; start here.
+    endpoint: GET /v1/vehicles/vin/{vin}
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleVinDecode
+  - name: get_specifications
+    description: What did the factory build? Raw NHTSA vPIC spec sheet — seats, horsepower, GVWR, plant country.
+    endpoint: GET /v1/vehicles/specifications/{vin}
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleSpecifications
+  - name: get_recalls
+    description: Has this vehicle been recalled? Every NHTSA campaign for its year/make/model.
+    endpoint: GET /v1/vehicles/recalls/{vin}
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleRecalls
+  - name: get_vehicle_photos
+    description: What does it look like? One hero image plus a link to the source listing.
+    endpoint: GET /v1/vehicles/photos/{vin}
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehiclePhotos
+  - name: search_listings
+    description: What is for sale, and what are they asking? A page of live dealer listings plus the total match count.
+    endpoint: GET /v1/vehicles/listings
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleListings
+  - name: get_listing_history
+    description: Has this listing dropped in price, and how long has it sat? Scale plan only — other plans get 403.
+    endpoint: GET /v1/vehicles/history/{vin}
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleHistory
+  - name: get_market_value
+    description: What is this car worth today? ML-predicted asking price for a year/make/model.
+    endpoint: GET /v1/vehicles/market-value
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleMarketValue
+  - name: get_depreciation
+    description: How fast does this model lose value? Model-level retention curve and decay rate.
+    endpoint: GET /v1/vehicles/depreciation
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleDepreciation
+  - name: get_ownership_costs
+    description: What does it cost to run? EPA annual and five-year fuel cost, combined MPG, CO2. Fuel only.
+    endpoint: GET /v1/vehicles/ownership-costs
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleOwnershipCosts
+  - name: get_vehicle_report
+    description: >-
+      Give me everything on this VIN at once: identity, value and depreciation in one call. The most
+      expensive operation on the API.
+    endpoint: GET /v1/vehicles/report/{vin}
+    read_only: true
+    source_operation: openapi/vehicles-dev-api-vehicles-api-openapi.yml#getVehicleReport
+error_handling: >-
+  A non-2xx becomes an isError tool result carrying the HTTP status, the machine `code`, the
+  `request_id` and a recovery hint, so an agent can correct a bad argument and retry unaided.
+billing_note: >-
+  Every tool call is one billable request at the same per-endpoint price and the same successOnly
+  rule — charged on 2xx, free on any failure. An exploring agent spends credits faster than a
+  hand-written integration, and usage is visible only in the dashboard.

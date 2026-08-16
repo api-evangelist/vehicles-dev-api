@@ -1,0 +1,106 @@
+generated: '2026-08-16'
+method: searched
+source: https://vehicles.dev/docs#authentication
+docs: https://vehicles.dev/docs#authentication
+derived_from: openapi/_original/vehicles-dev-api-openapi.json
+note: >-
+  Upgraded from the mechanical derive, which reported only apiKeyBearer. The contract declares TWO
+  bearer schemes and they gate different planes: apiKeyBearer (a vdev_ product key) on the data plane,
+  workosBearer (a WorkOS dashboard session token) on the control and operator planes. Presenting a
+  vdev_ key to a control-plane route returns 401 invalid_credential.
+summary:
+  types: [http]
+  schemes: [bearer]
+  api_key_in: [header]
+  oauth2_flows: []
+  planes: 2
+schemes:
+  - name: apiKeyBearer
+    type: http
+    scheme: bearer
+    bearerFormat: Product API key
+    header: Authorization
+    prefix: vdev_
+    audience: data plane
+    applies_to:
+      - /v1/vehicles/*
+      - /v1/employment/*
+    operations: 16
+    sources:
+      - openapi/vehicles-dev-api-vehicles-api-openapi.yml
+      - openapi/vehicles-dev-api-data-api-openapi.yml
+      - openapi/vehicles-dev-api-employment-api-openapi.yml
+      - openapi/vehicles-dev-api-reports-api-openapi.yml
+  - name: workosBearer
+    type: http
+    scheme: bearer
+    bearerFormat: WorkOS access token
+    header: Authorization
+    audience: dashboard control plane and operator plane
+    applies_to:
+      - /v1/control/*
+      - /v1/ops/*
+    operations: 41
+    identity_provider: WorkOS
+    identity_provider_note: >-
+      Inferred from the scheme's own bearerFormat, "WorkOS access token", declared by the provider in
+      its own spec. No authorization-server metadata is published — /.well-known/oauth-authorization-server
+      and /.well-known/openid-configuration both 404 — so the token issuance flow is not machine-discoverable.
+    sources:
+      - openapi/vehicles-dev-api-control-api-openapi.yml
+      - openapi/vehicles-dev-api-operator-api-openapi.yml
+      - openapi/vehicles-dev-api-admin-api-openapi.yml
+      - openapi/vehicles-dev-api-billing-api-openapi.yml
+unauthenticated_operations:
+  - {operation: getApiLiveness, path: /health/live}
+  - {operation: getApiReadiness, path: /health/ready}
+  - {operation: getOpenApiDocument, path: /openapi.json}
+  - operation: receivePaymentWebhook
+    path: '/webhooks/payments/{product}'
+    note: signature-verified inbound processor webhook
+usage:
+  header_format: 'Authorization: Bearer $VEHICLES_API_KEY'
+  scheme_token_case_sensitive: true
+  rejected_forms:
+    - {form: 'lowercase "bearer"', result: 401 invalid_credential}
+    - {form: double space after scheme, result: 401 invalid_credential}
+    - {form: query-string key, result: unsupported}
+    - {form: HTTP basic, result: unsupported}
+    - {form: Cookie header, result: 401 cookie_credentials_rejected}
+key_management:
+  mint: dashboard API keys panel (https://vehicles.dev/dashboard)
+  api: 'POST /v1/control/api-keys (createControlApiKey) — requires a WorkOS session token, not an API key'
+  revoke_api: 'DELETE /v1/control/api-keys/{id} (revokeControlApiKey)'
+  list_api: 'GET /v1/control/api-keys (listControlApiKeys)'
+  secret_visibility: displayed exactly once at creation and never recoverable
+  storage: provider stores only a hash and the last four characters
+  rotation: create-then-revoke; revocation takes effect immediately
+  product_scoping: >-
+    Keys are scoped to a single product. A key minted for another product on the same platform returns
+    401 invalid_credential.
+  enforcement_scope: >-
+    Rate limits and credit balances are enforced per account, not per key — splitting traffic across
+    several keys does not raise the throughput ceiling.
+permissions:
+  model: named permissions on machine keys (documented in prose, not in the contract)
+  note: >-
+    Not OAuth scopes — there is no oauth2 securityScheme and no scopes map in the OpenAPI, so no
+    scopes/ artifact is emitted. These permission strings appear only in the vehicle-history-report
+    section of the docs.
+  observed:
+    - {name: 'reports:order', requirement: 'Creating a history report, and explicitly retrying a durable submitting job, on the machine route'}
+    - {name: 'reports:read', requirement: Polling report status and reading the report result}
+    - {name: 'billing:write', requirement: The dashboard route for retrying a history-report submission}
+ordering:
+  note: >-
+    Authentication runs before schema validation. A request that is both unauthenticated and malformed
+    returns 401, never 400.
+transport_security:
+  https_required: true
+  tls_version_observed: TLSv1.3
+  hsts: false
+  see: security/vehicles-dev-api-domain-security.yml
+operational_guidance:
+  - Keep the key server-side; the API is not browser-callable and rejects any request carrying an Origin header.
+  - Never send a full key to support; redact to the last four characters.
+  - Authorization and Cookie headers are redacted from provider logs, so quote x-request-id instead.

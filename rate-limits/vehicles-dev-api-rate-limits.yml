@@ -1,0 +1,70 @@
+generated: '2026-08-16'
+method: searched
+source: https://vehicles.dev/docs#pricing
+limit_count: 3
+algorithm: token bucket
+scope: per account
+scope_note: >-
+  Rate limits and credit balances are enforced per account, not per key, so splitting traffic across
+  several API keys does not raise the throughput ceiling. The bucket refills at the plan's
+  requests-per-second rate.
+limits:
+  - scope: per-account
+    plan: Starter
+    limit: 5
+    window: 1 second
+    unit: requests
+    burst: null
+    burst_note: Token bucket; the docs publish the refill rate but not a separate burst capacity.
+  - scope: per-account
+    plan: Pro
+    limit: 10
+    window: 1 second
+    unit: requests
+    burst: null
+  - scope: per-account
+    plan: Scale
+    limit: 50
+    window: 1 second
+    unit: requests
+    burst: null
+exhaustion:
+  status: 429
+  code: rate_limit_exceeded
+  retryable: true
+  body: application/problem+json (RFC 9457)
+  billing: >-
+    The billing reservation is released on a 429, so the rejected call is free.
+response_headers:
+  standard:
+    - header: retry-after
+      present_on: 429
+      units: whole seconds
+      description: How long to wait before retrying. The only rate-limit signal the API emits.
+    - header: x-request-id
+      present_on: every response, success or failure
+      description: Server-generated UUID; identical to request_id in a problem body. Client-supplied values are ignored and never echoed.
+    - header: cache-control
+      present_on: varies
+  ratelimit_headers_published: false
+  ratelimit_headers_note: >-
+    The docs state explicitly: "There are no x-ratelimit-* headers." No RateLimit-Limit /
+    RateLimit-Remaining / RateLimit-Reset (RFC 9331 draft) either. The complete set of non-standard
+    headers this API sets is x-request-id, retry-after and cache-control, so an agent cannot read
+    remaining quota — it can only react to a 429.
+quota_signals:
+  included_calls_header: false
+  credit_balance_header: false
+  note: >-
+    No machine-readable entitlement or credit balance. 402 insufficient_credits is the only
+    programmatic exhaustion signal for metered spend; usage is visible only in the dashboard.
+retry_guidance:
+  source: https://vehicles.dev/docs#errors-retries
+  guidance: >-
+    Branch on the `retryable` boolean in the problem document rather than the status code. Every 503
+    and the 429 set it true; other 4xx are false. Retry with exponential backoff and jitter. All ten
+    data endpoints are GETs and mutate nothing, so a retried read is always safe.
+related:
+  - conventions/vehicles-dev-api-conventions.yml
+  - errors/vehicles-dev-api-problem-types.yml
+  - plans/vehicles-dev-api-plans-pricing.yml

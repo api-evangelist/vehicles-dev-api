@@ -1,0 +1,3658 @@
+openapi: 3.2.0
+info:
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  title: Vehicles.dev Control API
+  version: 0.0.0
+servers:
+- description: Vehicles.dev API
+  url: https://api.vehicles.dev
+tags:
+- name: Control
+paths:
+  /v1/control/bootstrap:
+    post:
+      operationId: provisionControlIdentity
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - accountName
+              properties:
+                accountName:
+                  type: string
+                  maxLength: 120
+                  minLength: 1
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - accountProductId
+                - principalId
+                - product
+                - role
+                properties:
+                  accountProductId:
+                    type: string
+                    format: uuid
+                  principalId:
+                    type: string
+                    format: uuid
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  role:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - owner
+                    - type: string
+                      enum:
+                      - admin
+                    - type: string
+                      enum:
+                      - developer
+                    - type: string
+                      enum:
+                      - billing
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/account:
+    get:
+      operationId: getControlAccount
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - name
+                - product
+                - status
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - suspended
+                    - type: string
+                      enum:
+                      - deleted
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    patch:
+      operationId: updateControlAccount
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - name
+              properties:
+                name:
+                  type: string
+                  maxLength: 120
+                  minLength: 1
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - name
+                - product
+                - status
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - suspended
+                    - type: string
+                      enum:
+                      - deleted
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    delete:
+      operationId: deleteControlAccount
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - confirmation
+              properties:
+                confirmation:
+                  type: string
+                  enum:
+                  - delete
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '204':
+          description: Default Response
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/dashboard/actions:
+    get:
+      operationId: getControlDashboardActions
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - byMetric
+                - catalogVersion
+                - planId
+                properties:
+                  byMetric:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - calls
+                      - metricId
+                      properties:
+                        calls:
+                          type: integer
+                          minimum: 0
+                        metricId:
+                          type: string
+                      additionalProperties: false
+                  catalogVersion:
+                    type: string
+                  planId:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - starter
+                    - type: string
+                      enum:
+                      - pro
+                    - type: string
+                      enum:
+                      - scale
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/catalog:
+    get:
+      operationId: getControlBillingCatalog
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - currency
+                - metrics
+                - plans
+                - product
+                - version
+                properties:
+                  currency:
+                    type: string
+                    enum:
+                    - USD
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - description
+                      - freeEntitlementEligible
+                      - id
+                      - name
+                      - pricesMicros
+                      - successOnly
+                      - unit
+                      properties:
+                        description:
+                          type: string
+                        freeEntitlementEligible:
+                          type: boolean
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        pricesMicros:
+                          type: object
+                          required:
+                          - pro
+                          - scale
+                          - starter
+                          properties:
+                            pro:
+                              anyOf:
+                              - type: 'null'
+                              - type: integer
+                                minimum: 0
+                            scale:
+                              anyOf:
+                              - type: 'null'
+                              - type: integer
+                                minimum: 0
+                            starter:
+                              anyOf:
+                              - type: 'null'
+                              - type: integer
+                                minimum: 0
+                          additionalProperties: false
+                        successOnly:
+                          type: boolean
+                        unit:
+                          type: string
+                      additionalProperties: false
+                  plans:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - annualFeeMicros
+                      - description
+                      - featured
+                      - features
+                      - id
+                      - includedMonthlyCalls
+                      - monthlyFeeMicros
+                      - name
+                      - overagePolicy
+                      - rateLimitRps
+                      - support
+                      - trialDays
+                      properties:
+                        annualFeeMicros:
+                          type: integer
+                          minimum: 0
+                        description:
+                          type: string
+                        featured:
+                          type: boolean
+                        features:
+                          type: array
+                          items:
+                            type: string
+                        id:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - starter
+                          - type: string
+                            enum:
+                            - pro
+                          - type: string
+                            enum:
+                            - scale
+                        includedMonthlyCalls:
+                          anyOf:
+                          - type: 'null'
+                          - type: integer
+                            minimum: 0
+                        monthlyFeeMicros:
+                          type: integer
+                          minimum: 0
+                        name:
+                          type: string
+                        overagePolicy:
+                          type: string
+                          enum:
+                          - metered
+                        rateLimitRps:
+                          type: integer
+                          minimum: 1
+                        support:
+                          type: string
+                        trialDays:
+                          type: integer
+                          minimum: 0
+                      additionalProperties: false
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  version:
+                    type: string
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/summary:
+    get:
+      operationId: getControlBillingSummary
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - catalogVersion
+                - credits
+                - entitlement
+                - product
+                - subscription
+                - usage
+                properties:
+                  catalogVersion:
+                    type: string
+                  credits:
+                    type: object
+                    required:
+                    - balanceMicros
+                    properties:
+                      balanceMicros:
+                        type: integer
+                        minimum: 0
+                    additionalProperties: false
+                  entitlement:
+                    type: object
+                    required:
+                    - granted
+                    - key
+                    - remaining
+                    - used
+                    properties:
+                      granted:
+                        type: integer
+                        minimum: 0
+                      key:
+                        type: string
+                        enum:
+                        - eligible_api_calls
+                      remaining:
+                        type: integer
+                        minimum: 0
+                      used:
+                        type: integer
+                        minimum: 0
+                    additionalProperties: false
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  subscription:
+                    type: object
+                    required:
+                    - billingInterval
+                    - cancelAtPeriodEnd
+                    - currentPeriodEnd
+                    - currentPeriodStart
+                    - pastDueGraceEndsAt
+                    - planId
+                    - renewsAt
+                    - status
+                    - trialConsumed
+                    - trialEndsAt
+                    properties:
+                      billingInterval:
+                        anyOf:
+                        - type: string
+                          enum:
+                          - monthly
+                        - type: string
+                          enum:
+                          - annual
+                      cancelAtPeriodEnd:
+                        type: boolean
+                      currentPeriodEnd:
+                        type: string
+                        format: date-time
+                      currentPeriodStart:
+                        type: string
+                        format: date-time
+                      pastDueGraceEndsAt:
+                        anyOf:
+                        - type: 'null'
+                        - type: string
+                          format: date-time
+                      planId:
+                        anyOf:
+                        - type: string
+                          enum:
+                          - starter
+                        - type: string
+                          enum:
+                          - pro
+                        - type: string
+                          enum:
+                          - scale
+                      renewsAt:
+                        anyOf:
+                        - type: 'null'
+                        - type: string
+                          format: date-time
+                      status:
+                        anyOf:
+                        - type: string
+                          enum:
+                          - active
+                        - type: string
+                          enum:
+                          - trialing
+                        - type: string
+                          enum:
+                          - past_due
+                        - type: string
+                          enum:
+                          - canceled
+                      trialConsumed:
+                        type: boolean
+                      trialEndsAt:
+                        anyOf:
+                        - type: 'null'
+                        - type: string
+                          format: date-time
+                    additionalProperties: false
+                  usage:
+                    type: object
+                    required:
+                    - creditsAppliedMicros
+                    - grossAmountMicros
+                    - netAmountMicros
+                    - successfulEvents
+                    properties:
+                      creditsAppliedMicros:
+                        type: integer
+                        minimum: 0
+                      grossAmountMicros:
+                        type: integer
+                        minimum: 0
+                      netAmountMicros:
+                        type: integer
+                        minimum: 0
+                      successfulEvents:
+                        type: integer
+                        minimum: 0
+                    additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/usage:
+    get:
+      operationId: getControlBillingUsage
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - byMetric
+                - items
+                - period
+                properties:
+                  byMetric:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - calls
+                      - creditsAppliedMicros
+                      - grossAmountMicros
+                      - metricId
+                      - netAmountMicros
+                      - quantity
+                      properties:
+                        calls:
+                          type: integer
+                          minimum: 0
+                        creditsAppliedMicros:
+                          type: integer
+                          minimum: 0
+                        grossAmountMicros:
+                          type: integer
+                          minimum: 0
+                        metricId:
+                          type: string
+                        netAmountMicros:
+                          type: integer
+                          minimum: 0
+                        quantity:
+                          type: integer
+                          minimum: 0
+                      additionalProperties: false
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - creditsAppliedMicros
+                      - grossAmountMicros
+                      - metricId
+                      - netAmountMicros
+                      - occurredAt
+                      - quantity
+                      properties:
+                        creditsAppliedMicros:
+                          type: integer
+                          minimum: 0
+                        grossAmountMicros:
+                          type: integer
+                          minimum: 0
+                        metricId:
+                          type: string
+                        netAmountMicros:
+                          type: integer
+                          minimum: 0
+                        occurredAt:
+                          type: string
+                          format: date-time
+                        quantity:
+                          type: integer
+                          minimum: 0
+                      additionalProperties: false
+                  period:
+                    type: object
+                    required:
+                    - end
+                    - start
+                    properties:
+                      end:
+                        type: string
+                        format: date-time
+                      start:
+                        type: string
+                        format: date-time
+                    additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/orders:
+    get:
+      operationId: getControlBillingOrders
+      tags:
+      - Control
+      parameters:
+      - schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+        in: query
+        name: limit
+        required: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - amountMicros
+                      - description
+                      - id
+                      - kind
+                      - occurredAt
+                      - reference
+                      properties:
+                        amountMicros:
+                          type: integer
+                        description:
+                          type: string
+                        id:
+                          type: string
+                          format: uuid
+                        kind:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - purchase
+                          - type: string
+                            enum:
+                            - promotion
+                          - type: string
+                            enum:
+                            - refund
+                          - type: string
+                            enum:
+                            - adjustment
+                        occurredAt:
+                          type: string
+                          format: date-time
+                        reference:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                      additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/invoices:
+    get:
+      operationId: getControlBillingInvoices
+      tags:
+      - Control
+      parameters:
+      - schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+        in: query
+        name: limit
+        required: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - degraded
+                - invoices
+                properties:
+                  degraded:
+                    type: boolean
+                  invoices:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - amountDueMicros
+                      - amountPaidMicros
+                      - created
+                      - currency
+                      - hostedInvoiceUrl
+                      - id
+                      - invoicePdf
+                      - number
+                      - periodEnd
+                      - periodStart
+                      - status
+                      - totalMicros
+                      properties:
+                        amountDueMicros:
+                          type: integer
+                        amountPaidMicros:
+                          type: integer
+                        created:
+                          type: string
+                          format: date-time
+                        currency:
+                          type: string
+                        hostedInvoiceUrl:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        id:
+                          type: string
+                        invoicePdf:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        number:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        periodEnd:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                            format: date-time
+                        periodStart:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                            format: date-time
+                        status:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        totalMicros:
+                          type: integer
+                      additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/checkout:
+    post:
+      operationId: createControlBillingCheckout
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - amountUsd
+              properties:
+                amountUsd:
+                  type: integer
+                  maximum: 500
+                  minimum: 5
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - url
+                properties:
+                  url:
+                    type: string
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/subscription/checkout:
+    post:
+      operationId: createControlBillingSubscriptionCheckout
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - interval
+              - planId
+              properties:
+                interval:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - monthly
+                  - type: string
+                    enum:
+                    - annual
+                planId:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - pro
+                  - type: string
+                    enum:
+                    - scale
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - url
+                properties:
+                  url:
+                    type: string
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/subscription/change:
+    post:
+      operationId: changeControlBillingSubscription
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - planId
+              properties:
+                planId:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - pro
+                  - type: string
+                    enum:
+                    - scale
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - applied
+                - planId
+                - status
+                properties:
+                  applied:
+                    type: boolean
+                  planId:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - starter
+                    - type: string
+                      enum:
+                      - pro
+                    - type: string
+                      enum:
+                      - scale
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - trialing
+                    - type: string
+                      enum:
+                      - past_due
+                    - type: string
+                      enum:
+                      - canceled
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/subscription/cancel:
+    post:
+      operationId: cancelControlBillingSubscription
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cancelAtPeriodEnd
+              properties:
+                cancelAtPeriodEnd:
+                  type: boolean
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - cancelAtPeriodEnd
+                - renewsAt
+                properties:
+                  cancelAtPeriodEnd:
+                    type: boolean
+                  renewsAt:
+                    anyOf:
+                    - type: 'null'
+                    - type: string
+                      format: date-time
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/members:
+    get:
+      operationId: listControlMembers
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - id
+                  - principalId
+                  - role
+                  - status
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    principalId:
+                      type: string
+                      format: uuid
+                    role:
+                      anyOf:
+                      - type: string
+                        enum:
+                        - owner
+                      - type: string
+                        enum:
+                        - admin
+                      - type: string
+                        enum:
+                        - developer
+                      - type: string
+                        enum:
+                        - billing
+                    status:
+                      anyOf:
+                      - type: string
+                        enum:
+                        - active
+                      - type: string
+                        enum:
+                        - removed
+                  additionalProperties: false
+                  title: ControlMember
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/members/{id}:
+    patch:
+      operationId: updateControlMember
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - role
+              properties:
+                role:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - owner
+                  - type: string
+                    enum:
+                    - admin
+                  - type: string
+                    enum:
+                    - developer
+                  - type: string
+                    enum:
+                    - billing
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - principalId
+                - role
+                - status
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  principalId:
+                    type: string
+                    format: uuid
+                  role:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - owner
+                    - type: string
+                      enum:
+                      - admin
+                    - type: string
+                      enum:
+                      - developer
+                    - type: string
+                      enum:
+                      - billing
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - removed
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    delete:
+      operationId: removeControlMember
+      tags:
+      - Control
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '204':
+          description: Default Response
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/invitations:
+    get:
+      operationId: listControlInvitations
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - expiresAt
+                  - id
+                  - role
+                  - status
+                  properties:
+                    expiresAt:
+                      type: string
+                      format: date-time
+                    id:
+                      type: string
+                      format: uuid
+                    role:
+                      anyOf:
+                      - type: string
+                        enum:
+                        - owner
+                      - type: string
+                        enum:
+                        - admin
+                      - type: string
+                        enum:
+                        - developer
+                      - type: string
+                        enum:
+                        - billing
+                    status:
+                      anyOf:
+                      - type: string
+                        enum:
+                        - accepted
+                      - type: string
+                        enum:
+                        - creating
+                      - type: string
+                        enum:
+                        - delivery_ambiguous
+                      - type: string
+                        enum:
+                        - expired
+                      - type: string
+                        enum:
+                        - pending
+                      - type: string
+                        enum:
+                        - quarantined
+                      - type: string
+                        enum:
+                        - revocation_pending
+                      - type: string
+                        enum:
+                        - revoked
+                  additionalProperties: false
+                  title: ControlInvitation
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    post:
+      operationId: createControlInvitation
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - email
+              - role
+              properties:
+                email:
+                  type: string
+                  format: email
+                role:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - owner
+                  - type: string
+                    enum:
+                    - admin
+                  - type: string
+                    enum:
+                    - developer
+                  - type: string
+                    enum:
+                    - billing
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          maxLength: 200
+          minLength: 8
+        in: header
+        name: idempotency-key
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - expiresAt
+                - id
+                - role
+                - status
+                properties:
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  id:
+                    type: string
+                    format: uuid
+                  role:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - owner
+                    - type: string
+                      enum:
+                      - admin
+                    - type: string
+                      enum:
+                      - developer
+                    - type: string
+                      enum:
+                      - billing
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - accepted
+                    - type: string
+                      enum:
+                      - creating
+                    - type: string
+                      enum:
+                      - delivery_ambiguous
+                    - type: string
+                      enum:
+                      - expired
+                    - type: string
+                      enum:
+                      - pending
+                    - type: string
+                      enum:
+                      - quarantined
+                    - type: string
+                      enum:
+                      - revocation_pending
+                    - type: string
+                      enum:
+                      - revoked
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/invitations/accept:
+    post:
+      operationId: acceptControlInvitation
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - accountProductId
+                - principalId
+                - product
+                - role
+                properties:
+                  accountProductId:
+                    type: string
+                    format: uuid
+                  principalId:
+                    type: string
+                    format: uuid
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  role:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - owner
+                    - type: string
+                      enum:
+                      - admin
+                    - type: string
+                      enum:
+                      - developer
+                    - type: string
+                      enum:
+                      - billing
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/invitations/{id}:
+    delete:
+      operationId: revokeControlInvitation
+      tags:
+      - Control
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '204':
+          description: Default Response
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/api-keys:
+    get:
+      operationId: listControlApiKeys
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required:
+                  - id
+                  - lastCharacters
+                  - name
+                  - scopes
+                  - spendLimitCents
+                  - status
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                    lastCharacters:
+                      anyOf:
+                      - type: 'null'
+                      - type: string
+                        maxLength: 4
+                        minLength: 4
+                    name:
+                      type: string
+                    scopes:
+                      type: array
+                      items:
+                        type: string
+                    spendLimitCents:
+                      anyOf:
+                      - type: 'null'
+                      - type: integer
+                        minimum: 0
+                    status:
+                      anyOf:
+                      - type: string
+                        enum:
+                        - active
+                      - type: string
+                        enum:
+                        - creating
+                      - type: string
+                        enum:
+                        - orphaned
+                      - type: string
+                        enum:
+                        - revocation_pending
+                      - type: string
+                        enum:
+                        - revoked
+                      - type: string
+                        enum:
+                        - update_pending
+                  additionalProperties: false
+                  title: ControlApiKey
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    post:
+      operationId: createControlApiKey
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - idempotencyKey
+              - name
+              - scopes
+              properties:
+                idempotencyKey:
+                  type: string
+                  maxLength: 160
+                  minLength: 8
+                name:
+                  type: string
+                  maxLength: 120
+                  minLength: 1
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                    minLength: 1
+                  maxItems: 64
+                  minItems: 1
+                spendLimitCents:
+                  type: integer
+                  maximum: 100000000
+                  minimum: 0
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '201':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - lastCharacters
+                - name
+                - replayed
+                - scopes
+                - spendLimitCents
+                - status
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  lastCharacters:
+                    anyOf:
+                    - type: 'null'
+                    - type: string
+                      maxLength: 4
+                      minLength: 4
+                  name:
+                    type: string
+                  plaintext:
+                    type: string
+                  replayed:
+                    type: boolean
+                  scopes:
+                    type: array
+                    items:
+                      type: string
+                  spendLimitCents:
+                    anyOf:
+                    - type: 'null'
+                    - type: integer
+                      minimum: 0
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - creating
+                    - type: string
+                      enum:
+                      - orphaned
+                    - type: string
+                      enum:
+                      - revocation_pending
+                    - type: string
+                      enum:
+                      - revoked
+                    - type: string
+                      enum:
+                      - update_pending
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/api-keys/{id}:
+    delete:
+      operationId: revokeControlApiKey
+      tags:
+      - Control
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      - schema:
+          type: string
+          maxLength: 160
+          minLength: 8
+        in: header
+        name: idempotency-key
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '204':
+          description: Default Response
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    patch:
+      operationId: updateControlApiKey
+      tags:
+      - Control
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - scopes
+              - spendLimitCents
+              properties:
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                    minLength: 1
+                  maxItems: 64
+                  minItems: 1
+                spendLimitCents:
+                  anyOf:
+                  - type: 'null'
+                  - type: integer
+                    maximum: 100000000
+                    minimum: 0
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - lastCharacters
+                - name
+                - scopes
+                - spendLimitCents
+                - status
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  lastCharacters:
+                    anyOf:
+                    - type: 'null'
+                    - type: string
+                      maxLength: 4
+                      minLength: 4
+                  name:
+                    type: string
+                  scopes:
+                    type: array
+                    items:
+                      type: string
+                  spendLimitCents:
+                    anyOf:
+                    - type: 'null'
+                    - type: integer
+                      minimum: 0
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - creating
+                    - type: string
+                      enum:
+                      - orphaned
+                    - type: string
+                      enum:
+                      - revocation_pending
+                    - type: string
+                      enum:
+                      - revoked
+                    - type: string
+                      enum:
+                      - update_pending
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports:
+    post:
+      operationId: createControlVehicleHistoryReport
+      summary: Order a dashboard vehicle history report
+      tags:
+      - Control
+      description: Orders a report for the signed-in account without exposing a provider credential or product API key to the browser.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - vin
+              properties:
+                vin:
+                  type: string
+                  pattern: ^[A-HJ-NPR-Z0-9a-hj-npr-z]{17}$
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: header
+        name: idempotency-key
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '202':
+          description: Default Response
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Account-bound status resource for the durable report order.
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                - replayed
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                  replayed:
+                    type: boolean
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    get:
+      operationId: listControlVehicleHistoryReports
+      summary: List recent dashboard vehicle history reports
+      tags:
+      - Control
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - createdAt
+                      - hasResult
+                      - id
+                      - retryAfterSeconds
+                      - status
+                      - updatedAt
+                      - vin
+                      properties:
+                        createdAt:
+                          type: string
+                          format: date-time
+                        hasResult:
+                          type: boolean
+                        id:
+                          type: string
+                          format: uuid
+                        retryAfterSeconds:
+                          type: integer
+                          maximum: 86400
+                          minimum: 1
+                        status:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - submitting
+                          - type: string
+                            enum:
+                            - queued
+                          - type: string
+                            enum:
+                            - processing
+                          - type: string
+                            enum:
+                            - action_required
+                          - type: string
+                            enum:
+                            - completed
+                        updatedAt:
+                          type: string
+                          format: date-time
+                        vin:
+                          type: string
+                          maxLength: 17
+                          minLength: 17
+                      additionalProperties: false
+                      title: VehicleHistoryReport
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports/{id}/retry:
+    post:
+      operationId: retryControlVehicleHistoryReportSubmission
+      summary: Retry dashboard vehicle history report submission
+      tags:
+      - Control
+      description: Retries provider submission for an account-owned dashboard report that is still in the local submitting state.
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '202':
+          description: Default Response
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Account-bound status resource for the durable report order.
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                - replayed
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                  replayed:
+                    type: boolean
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports/{id}:
+    get:
+      operationId: getControlVehicleHistoryReportStatus
+      summary: Poll dashboard vehicle history report status
+      tags:
+      - Control
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports/{id}/result:
+    get:
+      operationId: getControlVehicleHistoryReportResult
+      summary: Retrieve a completed dashboard vehicle history report
+      tags:
+      - Control
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - report
+                properties:
+                  report:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+components:
+  schemas:
+    def-0:
+      type: object
+      required:
+      - code
+      - detail
+      - request_id
+      - retryable
+      - status
+      - title
+      - type
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        instance:
+          type: string
+        invalid_params:
+          type: array
+          items:
+            type: object
+            required:
+            - name
+            - pointer
+            - reason
+            properties:
+              name:
+                type: string
+              pointer:
+                type: string
+              reason:
+                type: string
+            additionalProperties: false
+        request_id:
+          type: string
+        retryable:
+          type: boolean
+        status:
+          type: integer
+          maximum: 599
+          minimum: 400
+        title:
+          type: string
+        type:
+          type: string
+          format: uri
+      additionalProperties: false
+      title: Problem
+  securitySchemes:
+    apiKeyBearer:
+      bearerFormat: Product API key
+      scheme: bearer
+      type: http
+    workosBearer:
+      bearerFormat: WorkOS access token
+      scheme: bearer
+      type: http

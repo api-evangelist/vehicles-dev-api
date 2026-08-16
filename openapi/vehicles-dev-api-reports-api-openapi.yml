@@ -1,0 +1,1403 @@
+openapi: 3.2.0
+info:
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  title: Vehicles.dev Reports API
+  version: 0.0.0
+servers:
+- description: Vehicles.dev API
+  url: https://api.vehicles.dev
+tags:
+- name: Reports
+paths:
+  /v1/vehicles/history-reports:
+    post:
+      operationId: createVehicleHistoryReport
+      summary: Order a vehicle history report
+      tags:
+      - Reports
+      description: Orders one durable vehicle history report. Retrying the same logical order must reuse the same UUID Idempotency-Key. Billing settles only after the canonical report is available.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - vin
+              properties:
+                vin:
+                  type: string
+                  pattern: ^[A-HJ-NPR-Z0-9a-hj-npr-z]{17}$
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: header
+        name: idempotency-key
+        required: true
+      security:
+      - apiKeyBearer: []
+      responses:
+        '202':
+          description: Default Response
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Account-bound status resource for the durable report order.
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                - replayed
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                  replayed:
+                    type: boolean
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/vehicles/history-reports/{id}/retry:
+    post:
+      operationId: retryVehicleHistoryReportSubmission
+      summary: Retry vehicle history report submission
+      tags:
+      - Reports
+      description: Retries provider submission for an account-owned report that is still in the local submitting state.
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - apiKeyBearer: []
+      responses:
+        '202':
+          description: Default Response
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Account-bound status resource for the durable report order.
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                - replayed
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                  replayed:
+                    type: boolean
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/vehicles/history-reports/{id}:
+    get:
+      operationId: getVehicleHistoryReportStatus
+      summary: Poll vehicle history report status
+      tags:
+      - Reports
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - apiKeyBearer: []
+      responses:
+        '200':
+          description: Default Response
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/vehicles/history-reports/{id}/result:
+    get:
+      operationId: getVehicleHistoryReportResult
+      summary: Retrieve a completed vehicle history report
+      tags:
+      - Reports
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - apiKeyBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - report
+                properties:
+                  report:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports:
+    post:
+      operationId: createControlVehicleHistoryReport
+      summary: Order a dashboard vehicle history report
+      tags:
+      - Reports
+      description: Orders a report for the signed-in account without exposing a provider credential or product API key to the browser.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - vin
+              properties:
+                vin:
+                  type: string
+                  pattern: ^[A-HJ-NPR-Z0-9a-hj-npr-z]{17}$
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: header
+        name: idempotency-key
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '202':
+          description: Default Response
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Account-bound status resource for the durable report order.
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                - replayed
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                  replayed:
+                    type: boolean
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+    get:
+      operationId: listControlVehicleHistoryReports
+      summary: List recent dashboard vehicle history reports
+      tags:
+      - Reports
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - createdAt
+                      - hasResult
+                      - id
+                      - retryAfterSeconds
+                      - status
+                      - updatedAt
+                      - vin
+                      properties:
+                        createdAt:
+                          type: string
+                          format: date-time
+                        hasResult:
+                          type: boolean
+                        id:
+                          type: string
+                          format: uuid
+                        retryAfterSeconds:
+                          type: integer
+                          maximum: 86400
+                          minimum: 1
+                        status:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - submitting
+                          - type: string
+                            enum:
+                            - queued
+                          - type: string
+                            enum:
+                            - processing
+                          - type: string
+                            enum:
+                            - action_required
+                          - type: string
+                            enum:
+                            - completed
+                        updatedAt:
+                          type: string
+                          format: date-time
+                        vin:
+                          type: string
+                          maxLength: 17
+                          minLength: 17
+                      additionalProperties: false
+                      title: VehicleHistoryReport
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports/{id}/retry:
+    post:
+      operationId: retryControlVehicleHistoryReportSubmission
+      summary: Retry dashboard vehicle history report submission
+      tags:
+      - Reports
+      description: Retries provider submission for an account-owned dashboard report that is still in the local submitting state.
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '202':
+          description: Default Response
+          headers:
+            Location:
+              schema:
+                type: string
+              description: Account-bound status resource for the durable report order.
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                - replayed
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                  replayed:
+                    type: boolean
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports/{id}:
+    get:
+      operationId: getControlVehicleHistoryReportStatus
+      summary: Poll dashboard vehicle history report status
+      tags:
+      - Reports
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - createdAt
+                - hasResult
+                - id
+                - retryAfterSeconds
+                - status
+                - updatedAt
+                - vin
+                properties:
+                  createdAt:
+                    type: string
+                    format: date-time
+                  hasResult:
+                    type: boolean
+                  id:
+                    type: string
+                    format: uuid
+                  retryAfterSeconds:
+                    type: integer
+                    maximum: 86400
+                    minimum: 1
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - submitting
+                    - type: string
+                      enum:
+                      - queued
+                    - type: string
+                      enum:
+                      - processing
+                    - type: string
+                      enum:
+                      - action_required
+                    - type: string
+                      enum:
+                      - completed
+                  updatedAt:
+                    type: string
+                    format: date-time
+                  vin:
+                    type: string
+                    maxLength: 17
+                    minLength: 17
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/history-reports/{id}/result:
+    get:
+      operationId: getControlVehicleHistoryReportResult
+      summary: Retrieve a completed dashboard vehicle history report
+      tags:
+      - Reports
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: id
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - report
+                properties:
+                  report:
+                    type: object
+                    properties: {}
+                    additionalProperties: true
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '402':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '502':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                pattern: ^[1-9][0-9]*$
+              description: Seconds to wait before the next request.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+components:
+  schemas:
+    def-0:
+      type: object
+      required:
+      - code
+      - detail
+      - request_id
+      - retryable
+      - status
+      - title
+      - type
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        instance:
+          type: string
+        invalid_params:
+          type: array
+          items:
+            type: object
+            required:
+            - name
+            - pointer
+            - reason
+            properties:
+              name:
+                type: string
+              pointer:
+                type: string
+              reason:
+                type: string
+            additionalProperties: false
+        request_id:
+          type: string
+        retryable:
+          type: boolean
+        status:
+          type: integer
+          maximum: 599
+          minimum: 400
+        title:
+          type: string
+        type:
+          type: string
+          format: uri
+      additionalProperties: false
+      title: Problem
+  securitySchemes:
+    apiKeyBearer:
+      bearerFormat: Product API key
+      scheme: bearer
+      type: http
+    workosBearer:
+      bearerFormat: WorkOS access token
+      scheme: bearer
+      type: http

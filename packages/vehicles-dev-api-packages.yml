@@ -1,0 +1,68 @@
+generated: '2026-08-16'
+method: searched
+source: https://registry.npmjs.org/vehicles-dev-mcp
+note: >-
+  Vehicles.dev publishes exactly one first-party package: the local stdio MCP server. There is no
+  language client SDK in any registry. The docs' "Machine-readable spec" section tells consumers to
+  point a client generator at https://api.vehicles.dev/openapi.json rather than install a vendor
+  library, so the absence of SDKs is the provider's documented posture, not a harvest gap.
+registries_probed:
+  - registry: npm
+    query: vehicles-dev-mcp
+    status: 200
+    result: found
+  - registry: npm
+    query: 'search text=vehicles.dev'
+    status: 200
+    result: 1 package (vehicles-dev-mcp)
+  - registry: pypi
+    query: vehicles-dev
+    status: 404
+    result: absent
+  - registry: rubygems
+    query: vehicles-dev
+    result: absent
+  - registry: crates.io
+    query: vehicles-dev
+    result: absent
+  - registry: packagist
+    query: vehicles-dev
+    result: absent
+  - registry: nuget
+    query: vehicles.dev
+    result: absent
+  - registry: maven-central
+    query: vehicles.dev
+    result: absent
+  - registry: pkg.go.dev
+    query: vehicles.dev
+    result: absent
+packages:
+  - language: javascript
+    registry: npm
+    name: vehicles-dev-mcp
+    kind: mcp-server
+    url: https://www.npmjs.com/package/vehicles-dev-mcp
+    install: npx -y vehicles-dev-mcp
+    install_global: npm install -g vehicles-dev-mcp
+    binary: vehicles-dev-mcp
+    license: MIT
+    official: true
+    official_evidence: >-
+      npm homepage is https://vehicles.dev/docs#mcp and the provider's own docs name
+      "The package is vehicles-dev-mcp, published on npm under the MIT licence."
+    version: 0.1.0
+    published: '2026-08-14'
+    runtime: Node.js 20 or newer
+    dependencies:
+      - '@modelcontextprotocol/server@2.0.0'
+      - zod@4.4.3
+    repository: null
+    repository_note: npm metadata carries no repository field; no public source repo was found.
+    description: >-
+      Model Context Protocol server for the vehicles.dev API — VIN decode, specifications, recalls,
+      market value, depreciation, ownership costs, listings, history, photos, and reports as agent tools.
+sdk_count: 0
+sdk_note: >-
+  Zero client SDKs. vehicles-dev-mcp is a runnable stdio server binary for MCP clients, not a
+  language client library, so it is NOT counted as an SDK and no `SDKs` pointer is emitted.

@@ -1,0 +1,1791 @@
+openapi: 3.2.0
+info:
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  title: Vehicles.dev Billing API
+  version: 0.0.0
+servers:
+- description: Vehicles.dev API
+  url: https://api.vehicles.dev
+tags:
+- name: Billing
+paths:
+  /v1/control/billing/catalog:
+    get:
+      operationId: getControlBillingCatalog
+      tags:
+      - Billing
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - currency
+                - metrics
+                - plans
+                - product
+                - version
+                properties:
+                  currency:
+                    type: string
+                    enum:
+                    - USD
+                  metrics:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - description
+                      - freeEntitlementEligible
+                      - id
+                      - name
+                      - pricesMicros
+                      - successOnly
+                      - unit
+                      properties:
+                        description:
+                          type: string
+                        freeEntitlementEligible:
+                          type: boolean
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        pricesMicros:
+                          type: object
+                          required:
+                          - pro
+                          - scale
+                          - starter
+                          properties:
+                            pro:
+                              anyOf:
+                              - type: 'null'
+                              - type: integer
+                                minimum: 0
+                            scale:
+                              anyOf:
+                              - type: 'null'
+                              - type: integer
+                                minimum: 0
+                            starter:
+                              anyOf:
+                              - type: 'null'
+                              - type: integer
+                                minimum: 0
+                          additionalProperties: false
+                        successOnly:
+                          type: boolean
+                        unit:
+                          type: string
+                      additionalProperties: false
+                  plans:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - annualFeeMicros
+                      - description
+                      - featured
+                      - features
+                      - id
+                      - includedMonthlyCalls
+                      - monthlyFeeMicros
+                      - name
+                      - overagePolicy
+                      - rateLimitRps
+                      - support
+                      - trialDays
+                      properties:
+                        annualFeeMicros:
+                          type: integer
+                          minimum: 0
+                        description:
+                          type: string
+                        featured:
+                          type: boolean
+                        features:
+                          type: array
+                          items:
+                            type: string
+                        id:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - starter
+                          - type: string
+                            enum:
+                            - pro
+                          - type: string
+                            enum:
+                            - scale
+                        includedMonthlyCalls:
+                          anyOf:
+                          - type: 'null'
+                          - type: integer
+                            minimum: 0
+                        monthlyFeeMicros:
+                          type: integer
+                          minimum: 0
+                        name:
+                          type: string
+                        overagePolicy:
+                          type: string
+                          enum:
+                          - metered
+                        rateLimitRps:
+                          type: integer
+                          minimum: 1
+                        support:
+                          type: string
+                        trialDays:
+                          type: integer
+                          minimum: 0
+                      additionalProperties: false
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  version:
+                    type: string
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/summary:
+    get:
+      operationId: getControlBillingSummary
+      tags:
+      - Billing
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - catalogVersion
+                - credits
+                - entitlement
+                - product
+                - subscription
+                - usage
+                properties:
+                  catalogVersion:
+                    type: string
+                  credits:
+                    type: object
+                    required:
+                    - balanceMicros
+                    properties:
+                      balanceMicros:
+                        type: integer
+                        minimum: 0
+                    additionalProperties: false
+                  entitlement:
+                    type: object
+                    required:
+                    - granted
+                    - key
+                    - remaining
+                    - used
+                    properties:
+                      granted:
+                        type: integer
+                        minimum: 0
+                      key:
+                        type: string
+                        enum:
+                        - eligible_api_calls
+                      remaining:
+                        type: integer
+                        minimum: 0
+                      used:
+                        type: integer
+                        minimum: 0
+                    additionalProperties: false
+                  product:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - employment
+                    - type: string
+                      enum:
+                      - vehicles
+                  subscription:
+                    type: object
+                    required:
+                    - billingInterval
+                    - cancelAtPeriodEnd
+                    - currentPeriodEnd
+                    - currentPeriodStart
+                    - pastDueGraceEndsAt
+                    - planId
+                    - renewsAt
+                    - status
+                    - trialConsumed
+                    - trialEndsAt
+                    properties:
+                      billingInterval:
+                        anyOf:
+                        - type: string
+                          enum:
+                          - monthly
+                        - type: string
+                          enum:
+                          - annual
+                      cancelAtPeriodEnd:
+                        type: boolean
+                      currentPeriodEnd:
+                        type: string
+                        format: date-time
+                      currentPeriodStart:
+                        type: string
+                        format: date-time
+                      pastDueGraceEndsAt:
+                        anyOf:
+                        - type: 'null'
+                        - type: string
+                          format: date-time
+                      planId:
+                        anyOf:
+                        - type: string
+                          enum:
+                          - starter
+                        - type: string
+                          enum:
+                          - pro
+                        - type: string
+                          enum:
+                          - scale
+                      renewsAt:
+                        anyOf:
+                        - type: 'null'
+                        - type: string
+                          format: date-time
+                      status:
+                        anyOf:
+                        - type: string
+                          enum:
+                          - active
+                        - type: string
+                          enum:
+                          - trialing
+                        - type: string
+                          enum:
+                          - past_due
+                        - type: string
+                          enum:
+                          - canceled
+                      trialConsumed:
+                        type: boolean
+                      trialEndsAt:
+                        anyOf:
+                        - type: 'null'
+                        - type: string
+                          format: date-time
+                    additionalProperties: false
+                  usage:
+                    type: object
+                    required:
+                    - creditsAppliedMicros
+                    - grossAmountMicros
+                    - netAmountMicros
+                    - successfulEvents
+                    properties:
+                      creditsAppliedMicros:
+                        type: integer
+                        minimum: 0
+                      grossAmountMicros:
+                        type: integer
+                        minimum: 0
+                      netAmountMicros:
+                        type: integer
+                        minimum: 0
+                      successfulEvents:
+                        type: integer
+                        minimum: 0
+                    additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/usage:
+    get:
+      operationId: getControlBillingUsage
+      tags:
+      - Billing
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - byMetric
+                - items
+                - period
+                properties:
+                  byMetric:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - calls
+                      - creditsAppliedMicros
+                      - grossAmountMicros
+                      - metricId
+                      - netAmountMicros
+                      - quantity
+                      properties:
+                        calls:
+                          type: integer
+                          minimum: 0
+                        creditsAppliedMicros:
+                          type: integer
+                          minimum: 0
+                        grossAmountMicros:
+                          type: integer
+                          minimum: 0
+                        metricId:
+                          type: string
+                        netAmountMicros:
+                          type: integer
+                          minimum: 0
+                        quantity:
+                          type: integer
+                          minimum: 0
+                      additionalProperties: false
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - creditsAppliedMicros
+                      - grossAmountMicros
+                      - metricId
+                      - netAmountMicros
+                      - occurredAt
+                      - quantity
+                      properties:
+                        creditsAppliedMicros:
+                          type: integer
+                          minimum: 0
+                        grossAmountMicros:
+                          type: integer
+                          minimum: 0
+                        metricId:
+                          type: string
+                        netAmountMicros:
+                          type: integer
+                          minimum: 0
+                        occurredAt:
+                          type: string
+                          format: date-time
+                        quantity:
+                          type: integer
+                          minimum: 0
+                      additionalProperties: false
+                  period:
+                    type: object
+                    required:
+                    - end
+                    - start
+                    properties:
+                      end:
+                        type: string
+                        format: date-time
+                      start:
+                        type: string
+                        format: date-time
+                    additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/orders:
+    get:
+      operationId: getControlBillingOrders
+      tags:
+      - Billing
+      parameters:
+      - schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+        in: query
+        name: limit
+        required: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - items
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - amountMicros
+                      - description
+                      - id
+                      - kind
+                      - occurredAt
+                      - reference
+                      properties:
+                        amountMicros:
+                          type: integer
+                        description:
+                          type: string
+                        id:
+                          type: string
+                          format: uuid
+                        kind:
+                          anyOf:
+                          - type: string
+                            enum:
+                            - purchase
+                          - type: string
+                            enum:
+                            - promotion
+                          - type: string
+                            enum:
+                            - refund
+                          - type: string
+                            enum:
+                            - adjustment
+                        occurredAt:
+                          type: string
+                          format: date-time
+                        reference:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                      additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/invoices:
+    get:
+      operationId: getControlBillingInvoices
+      tags:
+      - Billing
+      parameters:
+      - schema:
+          type: integer
+          maximum: 50
+          minimum: 1
+        in: query
+        name: limit
+        required: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - degraded
+                - invoices
+                properties:
+                  degraded:
+                    type: boolean
+                  invoices:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - amountDueMicros
+                      - amountPaidMicros
+                      - created
+                      - currency
+                      - hostedInvoiceUrl
+                      - id
+                      - invoicePdf
+                      - number
+                      - periodEnd
+                      - periodStart
+                      - status
+                      - totalMicros
+                      properties:
+                        amountDueMicros:
+                          type: integer
+                        amountPaidMicros:
+                          type: integer
+                        created:
+                          type: string
+                          format: date-time
+                        currency:
+                          type: string
+                        hostedInvoiceUrl:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        id:
+                          type: string
+                        invoicePdf:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        number:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        periodEnd:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                            format: date-time
+                        periodStart:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                            format: date-time
+                        status:
+                          anyOf:
+                          - type: 'null'
+                          - type: string
+                        totalMicros:
+                          type: integer
+                      additionalProperties: false
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/checkout:
+    post:
+      operationId: createControlBillingCheckout
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - amountUsd
+              properties:
+                amountUsd:
+                  type: integer
+                  maximum: 500
+                  minimum: 5
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - url
+                properties:
+                  url:
+                    type: string
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/subscription/checkout:
+    post:
+      operationId: createControlBillingSubscriptionCheckout
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - interval
+              - planId
+              properties:
+                interval:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - monthly
+                  - type: string
+                    enum:
+                    - annual
+                planId:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - pro
+                  - type: string
+                    enum:
+                    - scale
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - url
+                properties:
+                  url:
+                    type: string
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/subscription/change:
+    post:
+      operationId: changeControlBillingSubscription
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - planId
+              properties:
+                planId:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - pro
+                  - type: string
+                    enum:
+                    - scale
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - applied
+                - planId
+                - status
+                properties:
+                  applied:
+                    type: boolean
+                  planId:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - starter
+                    - type: string
+                      enum:
+                      - pro
+                    - type: string
+                      enum:
+                      - scale
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - trialing
+                    - type: string
+                      enum:
+                      - past_due
+                    - type: string
+                      enum:
+                      - canceled
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/control/billing/subscription/cancel:
+    post:
+      operationId: cancelControlBillingSubscription
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cancelAtPeriodEnd
+              properties:
+                cancelAtPeriodEnd:
+                  type: boolean
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - cancelAtPeriodEnd
+                - renewsAt
+                properties:
+                  cancelAtPeriodEnd:
+                    type: boolean
+                  renewsAt:
+                    anyOf:
+                    - type: 'null'
+                    - type: string
+                      format: date-time
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '429':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/ops/admin/accounts/{accountProductId}/orders/{orderId}/refund:
+    post:
+      operationId: refundOperatorAdminOrder
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - operationId
+              - reason
+              properties:
+                amountMicros:
+                  type: integer
+                  minimum: 10000
+                  multipleOf: 10000
+                operationId:
+                  type: string
+                  format: uuid
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 1
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: accountProductId
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: orderId
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - amountMicros
+                - creditBalanceMicros
+                - creditReversalApplied
+                - refundId
+                - status
+                properties:
+                  amountMicros:
+                    type: integer
+                    minimum: 1
+                  creditBalanceMicros:
+                    type: integer
+                    minimum: 0
+                  creditReversalApplied:
+                    type: boolean
+                  refundId:
+                    type: string
+                    minLength: 1
+                  status:
+                    anyOf:
+                    - type: string
+                    - type: 'null'
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/ops/admin/accounts/{accountProductId}/subscription/plan:
+    post:
+      operationId: changeOperatorAdminSubscriptionPlan
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - operationId
+              - planId
+              - reason
+              properties:
+                operationId:
+                  type: string
+                  format: uuid
+                planId:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - pro
+                  - type: string
+                    enum:
+                    - scale
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 1
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: accountProductId
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - applied
+                - billingInterval
+                - cancelAtPeriodEnd
+                - planId
+                - renewsAt
+                - status
+                properties:
+                  applied:
+                    type: boolean
+                  billingInterval:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - monthly
+                    - type: string
+                      enum:
+                      - annual
+                  cancelAtPeriodEnd:
+                    type: boolean
+                  planId:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - starter
+                    - type: string
+                      enum:
+                      - pro
+                    - type: string
+                      enum:
+                      - scale
+                  renewsAt:
+                    anyOf:
+                    - type: string
+                      format: date-time
+                    - type: 'null'
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - trialing
+                    - type: string
+                      enum:
+                      - past_due
+                    - type: string
+                      enum:
+                      - canceled
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/ops/admin/accounts/{accountProductId}/subscription/cancellation:
+    post:
+      operationId: setOperatorAdminSubscriptionCancellation
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - cancelAtPeriodEnd
+              - operationId
+              - reason
+              properties:
+                cancelAtPeriodEnd:
+                  type: boolean
+                operationId:
+                  type: string
+                  format: uuid
+                reason:
+                  type: string
+                  maxLength: 1000
+                  minLength: 1
+              additionalProperties: false
+      parameters:
+      - schema:
+          type: string
+          format: uuid
+        in: path
+        name: accountProductId
+        required: true
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - applied
+                - billingInterval
+                - cancelAtPeriodEnd
+                - planId
+                - renewsAt
+                - status
+                properties:
+                  applied:
+                    type: boolean
+                  billingInterval:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - monthly
+                    - type: string
+                      enum:
+                      - annual
+                  cancelAtPeriodEnd:
+                    type: boolean
+                  planId:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - starter
+                    - type: string
+                      enum:
+                      - pro
+                    - type: string
+                      enum:
+                      - scale
+                  renewsAt:
+                    anyOf:
+                    - type: string
+                      format: date-time
+                    - type: 'null'
+                  status:
+                    anyOf:
+                    - type: string
+                      enum:
+                      - active
+                    - type: string
+                      enum:
+                      - trialing
+                    - type: string
+                      enum:
+                      - past_due
+                    - type: string
+                      enum:
+                      - canceled
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /v1/ops/billing/credits:
+    post:
+      operationId: grantOperatorBillingCredit
+      tags:
+      - Billing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - accountProductId
+              - amountMicros
+              - idempotencyKey
+              properties:
+                accountProductId:
+                  type: string
+                  format: uuid
+                amountMicros:
+                  type: integer
+                  minimum: 1
+                description:
+                  type: string
+                  maxLength: 300
+                  minLength: 1
+                idempotencyKey:
+                  type: string
+                  maxLength: 200
+                  minLength: 8
+                kind:
+                  anyOf:
+                  - type: string
+                    enum:
+                    - promotion
+                  - type: string
+                    enum:
+                    - adjustment
+                  - type: string
+                    enum:
+                    - purchase
+                referenceId:
+                  type: string
+                  maxLength: 200
+                  minLength: 1
+              additionalProperties: false
+      security:
+      - workosBearer: []
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - amountMicros
+                - applied
+                - creditBalanceMicros
+                properties:
+                  amountMicros:
+                    type: integer
+                    minimum: 0
+                  applied:
+                    type: boolean
+                  creditBalanceMicros:
+                    type: integer
+                    minimum: 0
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '401':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '403':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '409':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+  /webhooks/payments/{product}:
+    post:
+      operationId: receivePaymentWebhook
+      tags:
+      - Billing
+      parameters:
+      - schema:
+          type: string
+        in: path
+        name: product
+        required: true
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - applied
+                - received
+                properties:
+                  applied:
+                    type: boolean
+                  received:
+                    type: boolean
+                additionalProperties: false
+        '400':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '404':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '500':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+        '503':
+          description: RFC 9457 problem details.
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/def-0'
+components:
+  schemas:
+    def-0:
+      type: object
+      required:
+      - code
+      - detail
+      - request_id
+      - retryable
+      - status
+      - title
+      - type
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        instance:
+          type: string
+        invalid_params:
+          type: array
+          items:
+            type: object
+            required:
+            - name
+            - pointer
+            - reason
+            properties:
+              name:
+                type: string
+              pointer:
+                type: string
+              reason:
+                type: string
+            additionalProperties: false
+        request_id:
+          type: string
+        retryable:
+          type: boolean
+        status:
+          type: integer
+          maximum: 599
+          minimum: 400
+        title:
+          type: string
+        type:
+          type: string
+          format: uri
+      additionalProperties: false
+      title: Problem
+  securitySchemes:
+    apiKeyBearer:
+      bearerFormat: Product API key
+      scheme: bearer
+      type: http
+    workosBearer:
+      bearerFormat: WorkOS access token
+      scheme: bearer
+      type: http

@@ -1,0 +1,102 @@
+generated: '2026-08-16'
+method: searched
+source: https://vehicles.dev/docs#lifecycle
+versioning:
+  scheme: uri-path
+  current: v1
+  version_header: none
+  date_versioning: none
+  account_pinning: none
+  docs: https://vehicles.dev/docs#lifecycle-versioning
+  contract: The /v1/ path prefix is the contract.
+  additive_changes: >-
+    New endpoints, new fields on an existing response, new optional query parameters and new `code`
+    values on an existing status ship without notice. Clients must parse defensively — ignore unknown
+    JSON fields and fall back to the HTTP status on an unrecognized code.
+  breaking_changes: >-
+    Removing an endpoint, removing or renaming a response field, adding a required parameter,
+    tightening an existing parameter's constraints, changing a field's type, or changing what an
+    existing code means. A nested value going null, or a key disappearing from a null-omitting object,
+    is explicitly NOT breaking.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  notice_window: none on self-serve plans
+  note: >-
+    The provider states plainly: "There is no changelog page and no contractual deprecation window on
+    self-serve plans today." A notice period can be agreed in writing by emailing support@vehicles.dev.
+    No Sunset or Deprecation response header is documented and none appears in the OpenAPI.
+changelog:
+  published: false
+  url: null
+  note: Provider states there is no changelog page. No ChangeLog artifact or pointer is emitted.
+price_catalog:
+  version: '2026-08-07'
+  mechanism: >-
+    A subscription pins a catalog version; every metered event records the unit price actually
+    applied; a new catalog is adopted at the start of the next UTC monthly period. A price change
+    never reprices past calls and never takes effect mid-period.
+sla:
+  url: null
+  uptime_target: null
+  published: false
+  note: >-
+    "We publish no uptime target, status page or incident channel today, and self-serve plans carry no
+    SLA." What is offered instead is explicit failure: every dependency outage surfaces as a
+    documented 503 with retryable: true, upstream calls are bounded by the per-endpoint timeout, and
+    x-request-id is the incident trace. Contractual uptime is negotiated before build.
+status_page: null
+status_page_published: false
+status_page_note: >-
+  No status page and no incident channel. Outages are reported by email to support@vehicles.dev with a
+  request id and a UTC timestamp. NO StatusPage pointer is emitted — this records a measured absence.
+health_endpoints:
+  - {operation: getApiLiveness, path: /health/live, auth: none, probed_status: 200}
+  - {operation: getApiReadiness, path: /health/ready, auth: none}
+health_endpoints_note: >-
+  The only machine-readable availability signal Vehicles.dev exposes. Unauthenticated;
+  GET https://api.vehicles.dev/health/live returned 200 application/json on 2026-08-16.
+data_freshness:
+  live_upstream_uncached:
+    endpoints: [getVehicleSpecifications, getVehicleRecalls, getVehicleOwnershipCosts]
+    note: >-
+      Call NHTSA vPIC, the NHTSA recalls API and EPA fueleconomy.gov on every request, as does the
+      "vpic" fallback in VIN Decode and the composite report. Exactly as current, and as available, as
+      those agencies are.
+  store_backed_crawl_paced:
+    endpoints: [getVehicleListings, getVehicleHistory, getVehiclePhotos, getVehicleVinDecode]
+    max_staleness_published: false
+    note: >-
+      No crawl timestamp is exposed on listings rows. is_active means the row was live at the last
+      crawl pass that covered it, not when that pass ran; days_on_market counts from first observation,
+      not the dealer's listing date. Only Listing Price History (Scale-only) exposes firstSeen,
+      lastSeen and observed_at.
+  precomputed:
+    endpoints: [getVehicleDepreciation, getVehicleMarketValue]
+    note: >-
+      Depreciation is a periodically rebuilt table and Market Value a periodically retrained model;
+      both refresh on the provider's schedule, so two identical calls minutes apart agree.
+deprecated_operations: []
+deprecated_operations_note: 'No operation in the OpenAPI carries deprecated: true.'
+legacy_operations:
+  - operation: getVehicleReport
+    path: /v1/vehicles/report/{vin}
+    label: Legacy Composite Vehicle Report
+    note: >-
+      The docs label it "legacy" and warn against confusing it with the provider-backed
+      history-report workflow. Still sold and priced; no sunset date is published.
+support:
+  channel: support@vehicles.dev
+  url: https://vehicles.dev/docs#support
+  required_with_report: [x-request-id, UTC timestamp, endpoint and parameters with the key redacted to its last four characters]
+usage_terms:
+  url: https://vehicles.dev/docs#support-terms
+  separate_tos_page: false
+  note: >-
+    "This page is the current statement of usage rights — there is no separate terms-of-service,
+    acceptable-use or DPA page yet." Standard plans cover use inside your own product or internal
+    systems; bulk redistribution or resale of raw records needs a separate written agreement. Photo
+    URLs point at CDNs owned by the source marketplace and the imagery is not sublicensed.

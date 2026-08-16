@@ -1,0 +1,35 @@
+# Kin Score artifact — vehicles-dev-api — 2026-08-16T172127
+# The API Evangelist rating (https://github.com/api-evangelist/kin-score). Generated; do not edit.
+---
+kin_score:
+  slug: vehicles-dev-api
+  schema_version: 0.11.0
+  scored_at: '2026-08-16'
+  run_ts: 2026-08-16T172127
+  composite: 50.2
+  band: developing
+  facets:
+    discoverability: 77.8
+    contract_quality: 46.7
+    governance: 20.8
+    operational_transparency: 31.6
+    developer_ergonomics: 65.2
+    commercial_clarity: 55.3
+  agent_readiness:
+    score: 62.2
+    band: agent-native
+    dimensions:
+      spec_presence: true
+      agentic_access: false
+      mcp_server: true
+      auth_clarity: true
+      idempotency: verified
+      error_semantics: verified
+      openapi_examples: false
+      rate_limit_signal: verified
+      event_surface_described: false
+      agent_skills: true
+      well_known_catalog: false
+      consent_identity: false
+      agent_card: false
+      dry_run_mode: false

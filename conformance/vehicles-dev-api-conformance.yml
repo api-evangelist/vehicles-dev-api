@@ -1,0 +1,97 @@
+generated: '2026-08-16'
+method: derived
+source: openapi/_original/vehicles-dev-api-openapi.json + https://vehicles.dev/docs
+note: >-
+  Vehicles.dev publishes no certifications and no compliance programme — there is no trust centre, no
+  SOC 2 / ISO 27001 / PCI / HIPAA claim anywhere on the site, and the docs say vendor-security
+  paperwork is handled by email. NO Compliance pointer is emitted. The entries below are
+  specification-level conformance derived from the contract and the published conventions.
+standards:
+  - id: openapi-3.1
+    conforms: true
+    evidence: >-
+      openapi 3.1.0 served unauthenticated at https://api.vehicles.dev/openapi.json (HTTP 200,
+      application/json, 61 operations, 54 paths); generated from the same schemas that validate every
+      request.
+  - id: rfc9457-problem-details
+    conforms: true
+    evidence: >-
+      Every failure is application/problem+json with type/title/status/detail/instance plus the
+      extensions code, request_id, retryable and invalid_params. Documented at
+      https://vehicles.dev/docs#errors and modelled in the spec's shared error schema.
+  - id: rfc7807-problem-details
+    conforms: true
+    evidence: Superseded by RFC 9457; the envelope satisfies both.
+  - id: rfc6750-bearer-token
+    conforms: true
+    evidence: >-
+      Authorization: Bearer <key> is the only accepted scheme; securitySchemes apiKeyBearer and
+      workosBearer are both type http / scheme bearer.
+  - id: oauth2
+    conforms: false
+    evidence: >-
+      No oauth2 securityScheme in the contract and no OAuth flow in the docs. The control plane uses a
+      WorkOS-issued session token, but no authorization-server metadata is published
+      (/.well-known/oauth-authorization-server 404).
+  - id: oidc
+    conforms: false
+    evidence: /.well-known/openid-configuration returns 404 on both hosts.
+  - id: idempotency-key
+    conforms: true
+    evidence: >-
+      A UUID Idempotency-Key header is required on POST /v1/vehicles/history-reports; reuse with the
+      same VIN replays, reuse with a different VIN returns 409 idempotency_conflict. Documented at
+      https://vehicles.dev/docs#vehicle-history-reports-retries.
+  - id: pagination
+    conforms: true
+    evidence: >-
+      limit (1-500, default 50) / offset against a total match count on getVehicleListings. Partial —
+      only one endpoint paginates; no cursors and no RFC 8288 Link headers.
+  - id: rfc8594-sunset-header
+    conforms: false
+    evidence: No Sunset or Deprecation header is documented or present in the contract.
+  - id: rfc9116-security-txt
+    conforms: false
+    evidence: /.well-known/security.txt returns 404 on api.vehicles.dev and vehicles.dev.
+  - id: rfc8615-well-known
+    conforms: false
+    evidence: No /.well-known/ document is served on any host (see well-known/vehicles-dev-api-well-known.yml).
+  - id: json-api
+    conforms: false
+    evidence: Plain JSON envelopes, camelCase at the top level; no JSON:API document structure.
+  - id: odata
+    conforms: false
+  - id: fhir
+    conforms: false
+  - id: scim
+    conforms: false
+  - id: fapi
+    conforms: false
+  - id: psd2
+    conforms: false
+  - id: asyncapi
+    conforms: false
+    evidence: >-
+      No event surface. The single /webhooks/payments/{product} route is an inbound receiver for the
+      payment processor, not a consumer-subscribable event stream.
+  - id: mcp
+    conforms: true
+    evidence: >-
+      First-party MCP server vehicles-dev-mcp on npm (MIT, 0.1.0, 2026-08-14) built on
+      @modelcontextprotocol/server 2.0.0, exposing ten readOnlyHint tools over stdio. No remote HTTP
+      transport — mcp.vehicles.dev does not resolve.
+  - id: a2a
+    conforms: false
+    evidence: /.well-known/agent-card.json and /.well-known/agent.json both 404 on both hosts.
+  - id: cors
+    conforms: false
+    evidence: >-
+      Deliberate. No CORS headers are served and an Origin header causes 404 route_not_found — a
+      documented server-to-server posture, not an oversight.
+data_sources:
+  - {source: NHTSA vPIC, use: factory specifications and VIN fallback decoding}
+  - {source: NHTSA Recalls API, use: safety campaigns}
+  - {source: EPA fueleconomy.gov, use: ownership costs}
+  - {source: proprietary US dealer-listings crawl, use: listings, price history, photos, valuation model}
+certifications: []
+compliance_programme_published: false

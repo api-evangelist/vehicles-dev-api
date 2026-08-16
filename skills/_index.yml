@@ -1,0 +1,28 @@
+generated: '2026-08-16'
+method: generated
+source: >-
+  openapi/_original/vehicles-dev-api-openapi.json + https://vehicles.dev/docs. Every operationId below
+  was grepped from the live OpenAPI 3.1 document before it was written into a skill. No
+  provider-published AGENTS.md or skill files exist — vehicles.dev/llms.txt returns 404 and the
+  provider ships only the vehicles-dev-mcp stdio server.
+skills:
+  - file: vehicles-dev-api-identify-and-value-a-vin.md
+    name: Identify and value a VIN
+    api: openapi/vehicles-dev-api-vehicles-api-openapi.yml
+    operations: [getVehicleVinDecode, getVehicleMarketValue, getVehicleDepreciation, getVehicleReport]
+  - file: vehicles-dev-api-order-a-vehicle-history-report.md
+    name: Order a vehicle history report
+    api: openapi/vehicles-dev-api-reports-api-openapi.yml
+    operations:
+      - createVehicleHistoryReport
+      - getVehicleHistoryReportStatus
+      - retryVehicleHistoryReportSubmission
+      - getVehicleHistoryReportResult
+  - file: vehicles-dev-api-search-listings-and-price-history.md
+    name: Search dealer listings and read price history
+    api: openapi/vehicles-dev-api-vehicles-api-openapi.yml
+    operations: [getVehicleListings, getVehicleHistory, getVehiclePhotos]
+  - file: vehicles-dev-api-check-safety-and-running-costs.md
+    name: Check safety recalls and running costs
+    api: openapi/vehicles-dev-api-vehicles-api-openapi.yml
+    operations: [getVehicleRecalls, getVehicleSpecifications, getVehicleOwnershipCosts]
