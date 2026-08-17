@@ -4,7 +4,7 @@ description: >-
   depreciation, ownership costs, listings, price history, and photos, backed by federal sources (NHTSA vPIC, NHTSA
   recalls, EPA) and a continuously crawled US dealer-listings store. Ships an OpenAPI 3.1 contract and a local MCP
   server exposing all ten endpoints as read-only tools.
-url: https://vehicles-dev-api.apievangelist.com/apis.yml
+url: https://raw.githubusercontent.com/api-evangelist/vehicles-dev-api/refs/heads/main/apis.yml
 created: '2026-08-15'
 modified: '2026-08-16'
 specificationVersion: '0.21'
