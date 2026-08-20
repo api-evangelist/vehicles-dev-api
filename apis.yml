@@ -21,6 +21,32 @@ tags:
   - Vehicle Specifications
   - Depreciation
   - Ownership Costs
+  - Job
+  - Labor Market Data
+  - REST
+  - OpenAPI
+  - Vehicle Safety
+  - Car Listings
+  - Marketplace
+  - Pricing
+  - Cost of Ownership
+  - Vehicle Images
+  - MCP
+  - Agent Tools
+  - Machine-Learning
+tags_raw:
+  - Automotive
+  - Vehicle Data
+  - VIN Decoding
+  - Vehicle Valuation
+  - Market Value
+  - Vehicle Listings
+  - Recalls
+  - NHTSA
+  - vPIC
+  - Vehicle Specifications
+  - Depreciation
+  - Ownership Costs
   - Jobs
   - Labor Market Data
   - REST
@@ -120,7 +146,8 @@ apis:
   description: The operations API from Vehicles.dev — 3 operation(s) for operations.
   humanURL: https://api.vehicles.dev
   baseURL: https://api.vehicles.dev
-  tags:
+  tags: []
+  tags_raw:
   - operations
   properties:
   - type: OpenAPI
@@ -185,6 +212,8 @@ apis:
   humanURL: https://api.vehicles.dev
   baseURL: https://api.vehicles.dev
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
