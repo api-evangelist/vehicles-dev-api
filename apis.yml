@@ -61,38 +61,6 @@ tags_raw:
   - Agent Tools
   - Machine Learning
 apis:
-- aid: vehicles-dev-api:vehicles-dev-api-admin-api
-  name: Vehicles.dev Admin API
-  description: The Admin API from Vehicles.dev — 4 operation(s) for admin.
-  humanURL: https://api.vehicles.dev
-  baseURL: https://api.vehicles.dev
-  tags:
-  - Admin
-  properties:
-  - type: OpenAPI
-    url: openapi/vehicles-dev-api-admin-api-openapi.yml
-  - type: Overlay
-    url: overlays/vehicles-dev-api-admin-api-overlay.yaml
-  - type: Documentation
-    url: https://api.vehicles.dev/openapi.json
-  - type: Documentation
-    url: https://vehicles.dev/docs
-- aid: vehicles-dev-api:vehicles-dev-api-billing-api
-  name: Vehicles.dev Billing API
-  description: The Billing API from Vehicles.dev — 14 operation(s) for billing.
-  humanURL: https://api.vehicles.dev
-  baseURL: https://api.vehicles.dev
-  tags:
-  - Billing
-  properties:
-  - type: OpenAPI
-    url: openapi/vehicles-dev-api-billing-api-openapi.yml
-  - type: Overlay
-    url: overlays/vehicles-dev-api-billing-api-overlay.yaml
-  - type: Documentation
-    url: https://api.vehicles.dev/openapi.json
-  - type: Documentation
-    url: https://vehicles.dev/docs
 - aid: vehicles-dev-api:vehicles-dev-api-control-api
   name: Vehicles.dev Control API
   description: The Control API from Vehicles.dev — 23 operation(s) for control.
@@ -105,22 +73,6 @@ apis:
     url: openapi/vehicles-dev-api-control-api-openapi.yml
   - type: Overlay
     url: overlays/vehicles-dev-api-control-api-overlay.yaml
-  - type: Documentation
-    url: https://api.vehicles.dev/openapi.json
-  - type: Documentation
-    url: https://vehicles.dev/docs
-- aid: vehicles-dev-api:vehicles-dev-api-data-api
-  name: Vehicles.dev Data API
-  description: The Data API from Vehicles.dev — 12 operation(s) for data.
-  humanURL: https://api.vehicles.dev
-  baseURL: https://api.vehicles.dev
-  tags:
-  - Data
-  properties:
-  - type: OpenAPI
-    url: openapi/vehicles-dev-api-data-api-openapi.yml
-  - type: Overlay
-    url: overlays/vehicles-dev-api-data-api-overlay.yaml
   - type: Documentation
     url: https://api.vehicles.dev/openapi.json
   - type: Documentation
@@ -174,22 +126,6 @@ apis:
     url: https://api.vehicles.dev/openapi.json
   - type: Documentation
     url: https://vehicles.dev/docs
-- aid: vehicles-dev-api:vehicles-dev-api-reports-api
-  name: Vehicles.dev Reports API
-  description: The Reports API from Vehicles.dev — 8 operation(s) for reports.
-  humanURL: https://api.vehicles.dev
-  baseURL: https://api.vehicles.dev
-  tags:
-  - Reports
-  properties:
-  - type: OpenAPI
-    url: openapi/vehicles-dev-api-reports-api-openapi.yml
-  - type: Overlay
-    url: overlays/vehicles-dev-api-reports-api-overlay.yaml
-  - type: Documentation
-    url: https://api.vehicles.dev/openapi.json
-  - type: Documentation
-    url: https://vehicles.dev/docs
 - aid: vehicles-dev-api:vehicles-dev-api-vehicles-api
   name: Vehicles.dev Vehicles API
   description: The Vehicles API from Vehicles.dev — 14 operation(s) for vehicles.
@@ -236,6 +172,14 @@ generated:
   confidence: 95
   at: '2026-08-15T22:11:41.807Z'
 common:
+- type: Overlay
+  url: overlays/vehicles-dev-api-admin-api-overlay.yaml
+- type: Overlay
+  url: overlays/vehicles-dev-api-billing-api-overlay.yaml
+- type: Overlay
+  url: overlays/vehicles-dev-api-data-api-overlay.yaml
+- type: Overlay
+  url: overlays/vehicles-dev-api-reports-api-overlay.yaml
 - type: DomainSecurity
   url: security/vehicles-dev-api-domain-security.yml
 - type: Authentication
