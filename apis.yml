@@ -184,6 +184,9 @@ generated:
   confidence: 95
   at: '2026-08-15T22:11:41.807Z'
 common:
+- type: CapabilityMap
+  url: capabilities/vehicles-dev-api-capability-edges.yml
+  name: Vehicles.dev Business Capability Map
 - type: Overlay
   url: overlays/vehicles-dev-api-admin-api-overlay.yaml
 - type: Overlay
