@@ -1,0 +1,26 @@
+# Front Door AI Index — vehicles-dev-api — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: vehicles-dev-api
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: vehicles.dev
+  final_host: vehicles.dev
+  ownership: own
+  owner: vehicles-dev-api
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 1
+  host_score: 1
+  density: 0.86
+  words: 1169
+  tiers:
+    agentic: 1
+    core: 0
+    model: 0
+  ambiguous: 2
+  top_terms:
+    intelligence: 2
+    MCP: 1

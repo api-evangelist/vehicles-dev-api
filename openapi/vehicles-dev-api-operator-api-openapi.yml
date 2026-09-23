@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer `); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
   title: Vehicles.dev Operator API
   version: 0.0.0
 servers:
@@ -94,6 +94,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get operator identity
+      x-summary-source: derived
   /v1/ops/admin/snapshot:
     get:
       operationId: getOperatorAdminSnapshot
@@ -521,6 +523,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get operator admin snapshot
+      x-summary-source: derived
   /v1/ops/admin/accounts/{accountProductId}/orders/{orderId}/refund:
     post:
       operationId: refundOperatorAdminOrder
@@ -635,6 +639,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Refund operator admin order
+      x-summary-source: derived
   /v1/ops/admin/accounts/{accountProductId}/subscription/plan:
     post:
       operationId: changeOperatorAdminSubscriptionPlan
@@ -776,6 +782,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Change operator admin subscription plan
+      x-summary-source: derived
   /v1/ops/admin/accounts/{accountProductId}/subscription/cancellation:
     post:
       operationId: setOperatorAdminSubscriptionCancellation
@@ -911,6 +919,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Set operator admin subscription cancellation
+      x-summary-source: derived
   /v1/ops/break-glass/requests:
     post:
       operationId: requestBreakGlassLease
@@ -1055,6 +1065,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Request break glass lease
+      x-summary-source: derived
   /v1/ops/break-glass/requests/{leaseId}/approve:
     post:
       operationId: approveBreakGlassLease
@@ -1192,6 +1204,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Approve break glass lease
+      x-summary-source: derived
   /v1/ops/break-glass/requests/{leaseId}/revoke:
     post:
       operationId: revokeBreakGlassLease
@@ -1329,6 +1343,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Revoke break glass lease
+      x-summary-source: derived
   /v1/ops/accounts/{accountProductId}/invitation-security-reviews:
     get:
       operationId: listInvitationSecurityReviews
@@ -1695,6 +1711,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: List invitation security reviews
+      x-summary-source: derived
   /v1/ops/accounts/{accountProductId}/invitation-security-reviews/{reviewId}/resolve:
     post:
       operationId: resolveInvitationSecurityReview
@@ -2083,6 +2101,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Resolve invitation security review
+      x-summary-source: derived
   /v1/ops/billing/credits:
     post:
       operationId: grantOperatorBillingCredit
@@ -2194,6 +2214,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Grant operator billing credit
+      x-summary-source: derived
 components:
   schemas:
     def-0:

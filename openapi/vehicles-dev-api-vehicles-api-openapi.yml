@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer `); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
   title: .dev Vehicles API
   version: 0.0.0
 servers:
@@ -110,6 +110,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle vin decode
+      x-summary-source: derived
   /v1/vehicles/market-value:
     get:
       operationId: getVehicleMarketValue
@@ -290,6 +292,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle market value
+      x-summary-source: derived
   /v1/vehicles/listings:
     get:
       operationId: getVehicleListings
@@ -523,6 +527,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle listings
+      x-summary-source: derived
   /v1/vehicles/depreciation:
     get:
       operationId: getVehicleDepreciation
@@ -641,6 +647,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle depreciation
+      x-summary-source: derived
   /v1/vehicles/report/{vin}:
     get:
       operationId: getVehicleReport
@@ -777,6 +785,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle report
+      x-summary-source: derived
   /v1/vehicles/history/{vin}:
     get:
       operationId: getVehicleHistory
@@ -898,6 +908,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle history
+      x-summary-source: derived
   /v1/vehicles/photos/{vin}:
     get:
       operationId: getVehiclePhotos
@@ -1003,6 +1015,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle photos
+      x-summary-source: derived
   /v1/vehicles/specifications/{vin}:
     get:
       operationId: getVehicleSpecifications
@@ -1095,6 +1109,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle specifications
+      x-summary-source: derived
   /v1/vehicles/recalls/{vin}:
     get:
       operationId: getVehicleRecalls
@@ -1201,6 +1217,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle recalls
+      x-summary-source: derived
   /v1/vehicles/ownership-costs:
     get:
       operationId: getVehicleOwnershipCosts
@@ -1344,6 +1362,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get vehicle ownership costs
+      x-summary-source: derived
   /v1/vehicles/history-reports:
     post:
       operationId: createVehicleHistoryReport

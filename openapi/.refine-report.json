@@ -1,26 +1,21 @@
 {
   "provider": "vehicles-dev-api",
   "sources": [
-    "vehicles-dev-api-openapi.json"
+    "_original/vehicles-dev-api-openapi.json"
   ],
   "outputs": [
-    "vehicles-dev-api-admin-api-openapi.yml",
-    "vehicles-dev-api-billing-api-openapi.yml",
     "vehicles-dev-api-control-api-openapi.yml",
-    "vehicles-dev-api-data-api-openapi.yml",
     "vehicles-dev-api-employment-api-openapi.yml",
     "vehicles-dev-api-operator-api-openapi.yml",
-    "vehicles-dev-api-reports-api-openapi.yml",
     "vehicles-dev-api-vehicles-api-openapi.yml",
     "vehicles-dev-api-webhooks-api-openapi.yml",
     "vehicles-dev-api-operations-api-openapi.yml"
   ],
-  "archived": [
-    "archived openapi/vehicles-dev-api-openapi.json"
-  ],
+  "archived": [],
   "errors": [],
   "warnings": [],
   "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "vehicles-dev-api-openapi.json: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
     "vehicles-dev-api-openapi.json: declared missing tag: Admin",
     "vehicles-dev-api-openapi.json: declared missing tag: Billing",
@@ -32,7 +27,15 @@
     "vehicles-dev-api-openapi.json: declared missing tag: Vehicles",
     "vehicles-dev-api-openapi.json: declared missing tag: Webhooks",
     "vehicles-dev-api-openapi.json: declared missing tag: operations",
-    "apis.yml register: written (+10 apis, 10 total)"
+    "vehicles-dev-api-openapi.json: multi-axis tagging (10 tags, 6 first tags, 1.64x duplication over 61 operations) \u2014 split on first tag, 36 operations narrowed",
+    "apis.yml register: already-registered"
   ],
-  "skipped": []
+  "skipped": [
+    "vehicles-dev-api-control-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "vehicles-dev-api-employment-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "vehicles-dev-api-operations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "vehicles-dev-api-operator-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "vehicles-dev-api-vehicles-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "vehicles-dev-api-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

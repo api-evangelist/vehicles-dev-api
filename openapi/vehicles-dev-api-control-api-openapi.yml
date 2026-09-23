@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer `); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
   title: Vehicles.dev Control API
   version: 0.0.0
 servers:
@@ -120,6 +120,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Provision control identity
+      x-summary-source: derived
   /v1/control/account:
     get:
       operationId: getControlAccount
@@ -213,6 +215,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get control account
+      x-summary-source: derived
     patch:
       operationId: updateControlAccount
       tags:
@@ -319,6 +323,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Update control account
+      x-summary-source: derived
     delete:
       operationId: deleteControlAccount
       tags:
@@ -390,6 +396,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Delete control account
+      x-summary-source: derived
   /v1/control/dashboard/actions:
     get:
       operationId: getControlDashboardActions
@@ -485,6 +493,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get control dashboard actions
+      x-summary-source: derived
   /v1/control/billing/catalog:
     get:
       operationId: getControlBillingCatalog
@@ -681,6 +691,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get control billing catalog
+      x-summary-source: derived
   /v1/control/billing/summary:
     get:
       operationId: getControlBillingSummary
@@ -887,6 +899,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get control billing summary
+      x-summary-source: derived
   /v1/control/billing/usage:
     get:
       operationId: getControlBillingUsage
@@ -1028,6 +1042,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get control billing usage
+      x-summary-source: derived
   /v1/control/billing/orders:
     get:
       operationId: getControlBillingOrders
@@ -1143,6 +1159,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get control billing orders
+      x-summary-source: derived
   /v1/control/billing/invoices:
     get:
       operationId: getControlBillingInvoices
@@ -1278,6 +1296,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Get control billing invoices
+      x-summary-source: derived
   /v1/control/billing/checkout:
     post:
       operationId: createControlBillingCheckout
@@ -1360,6 +1380,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Create control billing checkout
+      x-summary-source: derived
   /v1/control/billing/subscription/checkout:
     post:
       operationId: createControlBillingSubscriptionCheckout
@@ -1455,6 +1477,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Create control billing subscription checkout
+      x-summary-source: derived
   /v1/control/billing/subscription/change:
     post:
       operationId: changeControlBillingSubscription
@@ -1568,6 +1592,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Change control billing subscription
+      x-summary-source: derived
   /v1/control/billing/subscription/cancel:
     post:
       operationId: cancelControlBillingSubscription
@@ -1654,6 +1680,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Cancel control billing subscription
+      x-summary-source: derived
   /v1/control/members:
     get:
       operationId: listControlMembers
@@ -1754,6 +1782,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: List control members
+      x-summary-source: derived
   /v1/control/members/{id}:
     patch:
       operationId: updateControlMember
@@ -1882,6 +1912,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Update control member
+      x-summary-source: derived
     delete:
       operationId: removeControlMember
       tags:
@@ -1946,6 +1978,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Remove control member
+      x-summary-source: derived
   /v1/control/invitations:
     get:
       operationId: listControlInvitations
@@ -2064,6 +2098,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: List control invitations
+      x-summary-source: derived
     post:
       operationId: createControlInvitation
       tags:
@@ -2214,6 +2250,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Create control invitation
+      x-summary-source: derived
   /v1/control/invitations/accept:
     post:
       operationId: acceptControlInvitation
@@ -2319,6 +2357,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Accept control invitation
+      x-summary-source: derived
   /v1/control/invitations/{id}:
     delete:
       operationId: revokeControlInvitation
@@ -2384,6 +2424,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Revoke control invitation
+      x-summary-source: derived
   /v1/control/api-keys:
     get:
       operationId: listControlApiKeys
@@ -2498,6 +2540,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: List control api keys
+      x-summary-source: derived
     post:
       operationId: createControlApiKey
       tags:
@@ -2644,6 +2688,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Create control api key
+      x-summary-source: derived
   /v1/control/api-keys/{id}:
     delete:
       operationId: revokeControlApiKey
@@ -2716,6 +2762,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Revoke control api key
+      x-summary-source: derived
     patch:
       operationId: updateControlApiKey
       tags:
@@ -2857,6 +2905,8 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/def-0'
+      summary: Update control api key
+      x-summary-source: derived
   /v1/control/history-reports:
     post:
       operationId: createControlVehicleHistoryReport

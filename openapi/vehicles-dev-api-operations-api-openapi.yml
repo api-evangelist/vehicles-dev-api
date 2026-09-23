@@ -1,19 +1,19 @@
 openapi: 3.2.0
 info:
-  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer <key>`); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
+  description: 'Vehicle identity and intelligence data — VIN decode, market value, listings, depreciation, reports, listing history, photos, specifications, recalls, and ownership costs — plus the account, API-key, and billing control plane. Data endpoints authenticate with a product API key (`Authorization: Bearer `); control-plane endpoints use a dashboard session token. Errors are RFC 9457 application/problem+json, and every response carries an x-request-id header.'
   title: Vehicles.dev Operations API
   version: 0.0.0
 servers:
 - description: Vehicles.dev API
   url: https://api.vehicles.dev
 tags:
-- name: operations
+- name: Operations
 paths:
   /health/live:
     get:
       operationId: getApiLiveness
       tags:
-      - operations
+      - Operations
       responses:
         '200':
           description: Default Response
@@ -35,11 +35,13 @@ paths:
                     enum:
                     - live
                 additionalProperties: false
+      summary: Get api liveness
+      x-summary-source: derived
   /health/ready:
     get:
       operationId: getApiReadiness
       tags:
-      - operations
+      - Operations
       responses:
         '200':
           description: Default Response
@@ -135,15 +137,19 @@ paths:
                       enum:
                       - unready
                 additionalProperties: false
+      summary: Get api readiness
+      x-summary-source: derived
   /openapi.json:
     get:
       operationId: getOpenApiDocument
       tags:
-      - operations
+      - Operations
       description: Returns the OpenAPI 3.1 document describing every published operation.
       responses:
         '200':
           description: Default Response
+      summary: Get open api document
+      x-summary-source: derived
 components:
   securitySchemes:
     apiKeyBearer:
