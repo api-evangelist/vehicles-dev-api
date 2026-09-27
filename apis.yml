@@ -61,7 +61,7 @@ tags:
   - Vehicle Images
   - MCP
   - Agent Tools
-  - Machine-Learning
+  - Machine Learning
 tags_raw:
   - Automotive
   - Vehicle Data
@@ -88,6 +88,7 @@ tags_raw:
   - MCP
   - Agent Tools
   - Machine Learning
+  - Machine-Learning
 apis:
 - aid: vehicles-dev-api:vehicles-dev-api-control-api
   name: Vehicles.dev Control API
