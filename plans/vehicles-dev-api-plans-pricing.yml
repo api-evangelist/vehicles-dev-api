@@ -148,3 +148,32 @@ enterprise:
     Bulk redistribution or resale of raw records needs a separate written agreement. Contractual
     uptime commitments, redistribution licences, DPAs and vendor-security paperwork are negotiated by
     email at support@vehicles.dev.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - free
+  - subscription
+  units: []
+  plans:
+  - name: Starter
+    access: other
+    model: free
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Pro
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - month
+  - name: Scale
+    access: other
+    model: subscription
+    model_how: derived
+    units: []
+    periods:
+    - month
